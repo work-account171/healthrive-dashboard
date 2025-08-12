@@ -7,11 +7,10 @@ import Link from "next/link";
 import Toaster from "@/app/components/Toaster";
 
 
-function login() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword,setShowPassword]=useState(true)
-  const [toastMessage,setToastMessage]=useState("")
     const [toast, setToast] = useState<{ message: string; variant: "success" | "error" | "warning" } | null>(null);
 
 
@@ -100,4 +99,4 @@ function login() {
   );
 }
 
-export default login;
+export default Login;
