@@ -4,14 +4,21 @@
   --background: #ffffff;
   --foreground: #171717;
   --primary:#4277BB;
+  --font-outfit: 'Outfit', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+
+
+
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary:var(--primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-    --primary:var(--primary);
+  --font-outfit: var(--font-outfit);
+    --font-inter: var(--font-inter); 
 
 }
 
@@ -26,4 +33,28 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-inter);
+
+}
+@keyframes slideIn {
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  20% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 2.5s ease-in-out forwards;
 }
