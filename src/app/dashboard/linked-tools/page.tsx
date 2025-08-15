@@ -1,8 +1,11 @@
+import Linktool from '@/app/components/linked-tools/Linkedtools'
 import React from 'react'
 
 function LinkedTools() {
   return (
-    <div>LinkedTools</div>
+    <div>
+    <Linktool/>
+    </div>
   )
 }
 

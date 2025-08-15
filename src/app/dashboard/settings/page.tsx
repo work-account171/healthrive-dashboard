@@ -1,8 +1,11 @@
+import UserSettings from '@/app/components/Settings/UserSettings'
 import React from 'react'
 
 function Settings() {
   return (
-    <div>Settings</div>
+    <div>
+      <UserSettings/>
+    </div>
   )
 }
 
