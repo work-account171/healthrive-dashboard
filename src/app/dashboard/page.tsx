@@ -1,9 +1,11 @@
-import React from 'react'
+// dashboard/page.tsx
+'use client';
 
-function page() {
+export default function Dashboard() {
+ 
   return (
-    <div className='w-full h-screen '>Home of dashboard</div>
-  )
+    <div>
+      <h1>Dashboard</h1>
+    </div>
+  );
 }
-
-export default page

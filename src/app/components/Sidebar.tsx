@@ -7,9 +7,10 @@ import calenderIcon from "@/../public/icons/calender.svg"
 import patientIcon from "@/../public/icons/patient.svg"
 import Image from "next/image"
 import { LogOutIcon } from "lucide-react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 function Sidebars() {
   const pathname=usePathname();
+  const router=useRouter()
   const links=[
     {
       href:"/dashboard",label:"Dashboard",icon:dashboardIcon
@@ -20,6 +21,18 @@ function Sidebars() {
     { href: "/dashboard/calender", label: "Calender", icon: calenderIcon },
     { href: "/dashboard/settings", label: "Setting", icon: settingIcon },
   ]
+  const handleLogout=async()=>{
+    try {
+      await fetch("/api/auth/logout",{
+        method:"POST",
+        credentials:"include"
+      })
+      router.push("/login")
+    } catch (error) {
+      console.error("logout failed")
+    }
+
+  }
   return (
     <>
     <aside className="w-[20%] my-6 p-6 h-[80%] flex flex-col items-center justify-between border-primary border-r">
@@ -48,7 +61,7 @@ function Sidebars() {
            
          
         </nav>
-        <button className="bg-gray-200 py-3 gap-2.5 text-[16px] font-bold hover:bg-primary hover:text-white px-4 flex justify-start items-center w-full rounded-xl">
+        <button onClick={handleLogout} className="bg-gray-200 py-3 gap-2.5 text-[16px] font-bold hover:bg-red-600 hover:text-white px-4 flex justify-start items-center w-full rounded-xl">
           <LogOutIcon/>
           Logout
           </button>
