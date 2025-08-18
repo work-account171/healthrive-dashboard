@@ -70,10 +70,11 @@ export async function POST(req: Request) {
     return response;
 
   } catch (error) {
-    console.error("Login error:", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
-  }
+  console.error("Login error:", error);
+
+  return NextResponse.json(
+    { message: error instanceof Error ? error.message : "Internal server error" },
+    { status: 500 }
+  );
+}
 }
