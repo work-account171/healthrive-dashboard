@@ -57,3 +57,11 @@ body {
 .animate-slide-in {
   animation: slideIn 2.5s ease-in-out forwards;
 }
+.scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

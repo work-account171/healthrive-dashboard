@@ -25,7 +25,7 @@ export default async function DashboardLayout({
   return (
     <div className="flex flex-col justify-start items-start">
       <Header />
-      <div className="flex flex-row w-full h-screen">
+      <div className="flex flex-row w-full pt-20 h-screen">
         <Sidebars />
         <main className="flex-1 px-6 pt-6">{children}</main>
       </div>

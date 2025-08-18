@@ -29,13 +29,13 @@ function Sidebars() {
       })
       router.push("/login")
     } catch (error) {
-      console.error("logout failed")
+      console.error("logout failed"+error)
     }
 
   }
   return (
     <>
-    <aside className="w-[20%] my-6 p-6 h-[80%] flex flex-col items-center justify-between border-primary border-r">
+    <aside className="w-fit  p-6 flex flex-col items-center justify-between border-primary border-r">
         <nav className="flex flex-col gap-5">
             {links.map(({href,label,icon})=>{
               const isActive=pathname===href;

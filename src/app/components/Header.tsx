@@ -8,7 +8,7 @@ import { Bell, User } from 'lucide-react';
 
 const Header: FC = () => {
   return (
-    <nav className="flex items-center justify-between w-full px-6 py-6 shadow-sm bg-white">
+    <nav className="flex fixed items-center justify-between w-full px-6 py-6 shadow-sm bg-white">
 
         <Image src={logo} alt="Healthrive Logo" width={200} height={40} />
         
