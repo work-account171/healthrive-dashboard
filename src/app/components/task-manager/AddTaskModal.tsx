@@ -2,6 +2,7 @@
 import { Upload, X } from "lucide-react";
 import React, { useState } from "react";
 import { useRef } from "react";
+import Toaster from "../Toaster";
 
 const categoriesList = [
   "Labs",
@@ -13,7 +14,7 @@ const categoriesList = [
 const linkedServices = ["Healthie", "Spruce", "CoverMyMeds", "Google Calender"];
 function AddTaskModal() {
   const [title, setTitle] = useState("");
-  const [modal,setModal]=useState(false)
+  const [modal, setModal] = useState(false);
   const [patientName, setPatientName] = useState("");
   const [taskDesc, setTaskDesc] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
@@ -22,9 +23,13 @@ function AddTaskModal() {
   const [dueDate, setDueDate] = useState("");
   const [priority, setPriority] = useState("");
   const [recurrance, setRecurrence] = useState("");
+  const [loading, setLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null); // ✅ Typed correctly
-
+const [toast, setToast] = useState<{
+    message: string;
+    variant: "success" | "error" | "warning";
+  } | null>(null);
   const handleClick = () => {
     fileInputRef.current?.click();
   };
@@ -54,52 +59,79 @@ function AddTaskModal() {
   const removeCategory = (category: string) => {
     setSelected((prev) => prev.filter((c) => c !== category));
   };
-  const handleModal=()=>{
-    if(modal==true){
-        setModal(false)
-    }else{
-        setModal(true)
+  const handleModal = () => {
+    if (modal == true) {
+      setModal(false);
+    } else {
+      setModal(true);
     }
-  }
-  const addTask=async(e:React.FormEvent<HTMLFormElement>)=>{
+  };
+  const addTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("task title"+title,"task desc"+taskDesc,"pat name"+patientName)
-    console.log("categories"+selected,"assignee"+selectedAssignee,"date"+dueDate)
-    console.log("services"+services,"priority"+priority,"recurrence"+recurrance)
+    setLoading(true);
+    
 
-    const newTask={
-        title,
-        description:taskDesc,
-        patientName,
-        categories:selected,
-        assignee:selectedAssignee,
-        dueDate,
-        services,
-        priority,
-        recurrence:recurrance
+    const newTask = {
+      title,
+      description: taskDesc,
+      patientName,
+      categories: selected,
+      assignee: selectedAssignee,
+      dueDate,
+      services,
+      priority,
+      recurrence: recurrance,
+    };
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/add-task`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // ✅
+        body: JSON.stringify(newTask),
+      });
 
+      const data = await res.json();
+      console.log("saved task", data);
+      if (res.ok && data.success) {
+        setModal(true);
+        setToast({ 
+        message: "Task successfully added", 
+        variant: "success" 
+      });
+      }
+    } catch (error: unknown) {
+      console.error("error while adding task", error);
+    } finally {
+      setLoading(false);
     }
-    const res=await fetch("/api/tasks/add-task",{
-        method:"POST",
-        headers:{"content-type":"applications/json"},
-        body:JSON.stringify(newTask)
-    })
-    const data=await res.json();
-    console.log("saved task",data);
-  }
+  };
   return (
     <>
+      {toast && (
+          <Toaster
+            message={toast.message}
+            variant={toast.variant}
+            onClose={() => setToast(null)}
+          />
+        )}
       <div
-        className={`modal bg-white rounded-xl overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${!modal?"absolute top-2":"hidden" }`}
+        className={`modal bg-white rounded-xl overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
+          !modal ? "absolute top-2" : "hidden"
+        }`}
       >
-        <X className="absolute top-3 right-3 border rounded-full p-1 cursor-pointer font-bold hover:text-red-500" onClick={handleModal}/>
+        <X
+          className="absolute top-3 right-3 border rounded-full p-1 cursor-pointer font-bold hover:text-red-500"
+          onClick={handleModal}
+        />
         <div className="flex flex-col justify-start items-start gap-4">
           <h1 className="text-2xl font-bold gap-4">Create New Task</h1>
           <p className="text-gray-600 text-[16px]">
             Fill out the details below to create a new task for you team.
           </p>
         </div>
-        <form onSubmit={(e)=>addTask(e)} className="w-full flex flex-col gap-5">
+        <form
+          onSubmit={(e) => addTask(e)}
+          className="w-full flex flex-col gap-5"
+        >
           <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
               <label htmlFor="title">
@@ -108,6 +140,7 @@ function AddTaskModal() {
               <input
                 type="text"
                 name="title"
+                required
                 value={title}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
                 placeholder="Enter task title"
@@ -116,8 +149,8 @@ function AddTaskModal() {
             </div>
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
               <label htmlFor="title">
-                Patient Name{" "}
-                <span className="text-red-500 font-semibold">*</span>
+                Patient Name (optional)
+                
               </label>
               <input
                 type="text"
@@ -136,11 +169,13 @@ function AddTaskModal() {
             <textarea
               name="title"
               value={taskDesc}
+              required
               className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
               placeholder="Enter task description..."
               onChange={(e) => setTaskDesc(e.target.value)}
             />
           </div>
+
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
             <div>
               <label className="font-semibold block mb-2">
@@ -184,6 +219,7 @@ function AddTaskModal() {
               <input
                 type="hidden"
                 name="categories"
+                required
                 value={JSON.stringify(selected)}
               />
             </div>
@@ -220,9 +256,11 @@ function AddTaskModal() {
                 type="date"
                 name="dueDate"
                 id="dueDate"
+                required
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 className="py-4 px-5 w-full bg-gray-100 text-gray-600 rounded-xl"
+                 min={new Date().toISOString().split("T")[0]}
               />
             </div>
           </div>
@@ -254,8 +292,8 @@ function AddTaskModal() {
                 className="py-4 px-5 w-full bg-gray-100 text-gray-600 rounded-xl"
                 required
               >
-                <option value="no">No recurrence</option>
-                <option value="yes">Yes recurrence</option>
+                <option value="daily">Daily</option>
+                <option value="monthly">Monthly</option>
               </select>
             </div>
           </div>
@@ -352,8 +390,19 @@ function AddTaskModal() {
             )}
           </div>
           <div className="flex justify-end items-end gap-5">
-            <button className="py-4 px-6 text-primary border border-primary rounded-xl hover:bg-red-200" onClick={handleModal}>Cancel</button>
-            <button type="submit" className="py-4 px-6 border border-primary rounded-xl bg-primary hover:bg-white hover:text-primary text-white">Create Task</button>
+            <button
+              className="py-4 px-6 text-primary border border-primary rounded-xl hover:bg-red-200"
+              onClick={handleModal}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="py-4 px-6 border border-primary rounded-xl bg-primary hover:bg-white hover:text-primary text-white"
+            >
+              {loading ? "Adding..." : "Add Task"}
+            </button>
           </div>
         </form>
       </div>
