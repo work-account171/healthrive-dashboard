@@ -80,7 +80,7 @@ function Login() {
                 />
               </div>
               <div className="flex flex-col gap-2 justify-center items-start w-full group">
-                <label htmlFor="email" className="text-black">
+                <label htmlFor="password" className="text-black">
                   Password
                 </label>
                 <div className="flex flex-row px-5 w-full focus-within:border-black focus-within:border-2  py-2.5 rounded-xl border border-[#d8dae5] justify-center items-center">
@@ -89,7 +89,7 @@ function Login() {
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    name="email"
+                    name="password"
                     className="w-full placeholder:text-[rgba(3,6,7,0.6)] outline-none "
                   />
                   <button
