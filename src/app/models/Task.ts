@@ -1,33 +1,42 @@
 import mongoose, { Schema } from "mongoose";
 
-
-export interface ITask extends Document{
-    title:string,
-    description:string,
-    patientName:string,
-    categories:string,
-    assignee:string,
-    dueDate:Date,
-    services:string[],
-    priority:"low"|"medium"|"high";
-    recurrence:string,
-    createdAt:Date,
-    updatedAt:Date
+export interface ITask extends Document {
+  title: string;
+  description: string;
+  patientName: string;
+  completed:boolean;
+  categories: string[];
+  assignee: string;
+  dueDate: Date;
+  services: string[];
+  priority: "low" | "medium" | "high";
+  recurrence: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const TaskSchema:Schema=new Schema(
-    {
-        title:{type:String,required:true},
-        description:{type:String,required:true},
-        patientName:{type:String,required:true},
-        categories:[{type:String}],
-        assignee:{type:String},
-        dueDate:{type:Date},
-        services:[{type:String}],
-        priority:{type:String,enum:["low","medium","high"],default:"medium"},
-        recurrence:{type:String}
+const TaskSchema: Schema = new Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    patientName: { type: String, required: true },
+    completed: {
+      type: Boolean,
+      default: false,
     },
-    {timestamps:true}
-)
+    categories: [{ type: String }],
+    assignee: { type: String },
+    dueDate: { type: Date },
+    services: [{ type: String }],
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
+    recurrence: { type: String },
+  },
+  { timestamps: true }
+);
 
-export default mongoose.models.Task || mongoose.model<ITask>("Task",TaskSchema)
+export default mongoose.models.Task ||
+  mongoose.model<ITask>("Task", TaskSchema);

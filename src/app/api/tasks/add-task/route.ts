@@ -6,6 +6,8 @@ import { NextResponse } from "next/server";
 export async function POST(req:Request){
     await dbConnect();
     const body=await req.json();
+    console.log('Completed field:', body.completed); 
+    console.log("Incoming task data:", body); 
 
     try {
         const task=await Task.create(body);

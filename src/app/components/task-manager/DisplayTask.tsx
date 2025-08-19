@@ -22,7 +22,7 @@ function DisplayTask() {
   
   async function fetchTasks() {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
     );
     const data = await res.json();
     setTasks(data);
@@ -33,14 +33,14 @@ function DisplayTask() {
   }, []);
 
   async function taskDone(id:string){
-    const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/${id}`,{
-      method:"DELETE",
+    const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/update/${id}`,{
+      method:"PATCH",
     }
     );
     if(res.ok){
       setTasks(tasks.filter(task=>task._id!==id))
       setToast({ 
-        message: "Task successfully done!", 
+        message: "Task successfully marked as done!", 
         variant: "success" 
       });
     }

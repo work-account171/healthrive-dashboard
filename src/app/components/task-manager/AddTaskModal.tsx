@@ -75,6 +75,7 @@ const [toast, setToast] = useState<{
       title,
       description: taskDesc,
       patientName,
+      completed:false,
       categories: selected,
       assignee: selectedAssignee,
       dueDate,
@@ -82,6 +83,7 @@ const [toast, setToast] = useState<{
       priority,
       recurrence: recurrance,
     };
+    console.log('Data being sent to backend:', newTask);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/add-task`, {
         method: "POST",

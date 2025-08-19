@@ -1,16 +1,82 @@
 // dashboard/page.tsx
 "use client";
 
+import { useEffect, useState } from "react";
 import TaskCard from "../components/dashboard/TaskCard";
+import NumberShimmer from "../components/dashboard/NumberShimmer";
+import ToolCard from "../components/linked-tools/ToolCard";
+import icon2 from "@/../public/icons/Icon2.svg";
+import icon3 from "@/../public/icons/Icon3.svg";
+import icon4 from "@/../public/icons/Icon4.svg";
+import icon5 from "@/../public/icons/Icon5.svg";
+import icon6 from "@/../public/icons/Icon6.svg";
+
+const tools = [
+    {
+      icon: "/icons/Icon.svg",
+      title: "Healthie",
+      subheading: "EMR & Patient Scheduling",
+      tags: ["Clinical", "HIPAA", "Critical", "EMR", "Scheduling"],
+    },
+    {
+      icon: icon2,
+      title: "Spruce",
+      subheading: "Patient Communication & Fax",
+      tags: ["Communication", "HIPAA", "Critical", "Fax"],
+    },
+    {
+      icon: icon3,
+      title: "Stripe",
+      subheading: "Payment Processing & Billing",
+      tags: ["Administrative", "Critical", "Billing", "Payment"],
+    },
+    {
+      icon: icon4,
+      title: "Google Calendar",
+      subheading: "Appointment Scheduling",
+      tags: ["Clinical", "Critical", "Calendar", "Scheduling"],
+    },
+    {
+      icon: icon5,
+      title: "CoverMyMeds",
+      subheading: "Prior Authorization Management",
+      tags: ["Clinical", "HIPAA", "Critical", "Prior Auth", "Insurance"],
+    },
+    {
+      icon: icon6,
+      title: "Gmail/Enguard",
+      subheading: "HIPAA-Compliant Email",
+      tags: ["Clinical", "HIPAA", "Critical", "Email"],
+    },
+  ]
 
 export default function Dashboard() {
-  
-  async function fetchTasks(){
-    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}`,{
-      method:"GET",
+  const [taskToday, setTodayTask] = useState();
+  const [taskWeek, settaskWeek] = useState();
+  const [totalTasks, settotalTasks] = useState();
+  const [completedTask, setcompletedTasks] = useState();
+  const [loading,setLoading]=useState(true)
 
-    })
+  async function fetchTasks() {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/stats`,
+      {
+        method: "GET",
+      }
+    );
+    const { tasksToday, tasksThisWeek, overdueTasks,totalTasks,completedTasks } = await res.json();
+
+    console.log("TASKS ARE", tasksToday, tasksThisWeek, overdueTasks, completedTasks);
+
+    setTodayTask(tasksToday);
+    settaskWeek(tasksThisWeek);
+    settotalTasks(totalTasks);
+    setcompletedTasks(completedTasks);
+    setLoading(false)
   }
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   return (
     <>
@@ -18,14 +84,56 @@ export default function Dashboard() {
         <div className="flex flex-col gap-4 justify-start items-start">
           <h1 className="text-[32px] font-bold">Dashboard Overview</h1>
           <p className="text-[16px]">
-            Welcome back, Dr. Chioma. Here's what needs your attention today.
+            Welcome back, Dr. Chioma. Here&apos;s what needs your attention today.
           </p>
         </div>
         <div className="flex justify-start items-start gap-5 w-full">
-          <TaskCard bgColor="bg-red-100" borderColor="border-red-400" textColor="text-red-600" text="Overdue Tasks" number={6}/>
-          <TaskCard bgColor="bg-yellow-100" borderColor="border-yellow-400" textColor="text-yellow-600" text="Due Today"  number={6}/>
-          <TaskCard bgColor="bg-blue-100" borderColor="border-blue-400" textColor="text-blue-600" text="This Week"  number={6}/>
-          <TaskCard bgColor="bg-green-100" borderColor="border-green-400" textColor="text-green-600" text="Completed" number={6}/>
+          <TaskCard
+            bgColor="bg-red-100"
+            borderColor="border-red-400"
+            textColor="text-red-600"
+            text="Overdue Tasks"
+            number={loading?<NumberShimmer/>:totalTasks}
+          />
+          <TaskCard
+            bgColor="bg-yellow-100"
+            borderColor="border-yellow-400"
+            textColor="text-yellow-600"
+            text="Due Today"
+            number={loading?<NumberShimmer/>:taskToday}
+          />
+          <TaskCard
+            bgColor="bg-blue-100"
+            borderColor="border-blue-400"
+            textColor="text-blue-600"
+            text="This Week"
+            number={loading?<NumberShimmer/>:taskWeek}
+          />
+          <TaskCard
+            bgColor="bg-green-100"
+            borderColor="border-green-400"
+            textColor="text-green-600"
+            text="Completed"
+            number={loading?<NumberShimmer/>:completedTask}
+          />
+        </div>
+        <div className="flex flex-col gap-5 justify-start items-start">
+          <h1 className="text-2xl font-bold">Quick Access Tools</h1>
+            <div className="flex flex-wrap justify-start itmes-start gap-5">
+              
+              {tools.map((tool,index)=>{
+                return(
+                    <ToolCard
+                              key={index}
+                              icon={tool.icon}
+                              title={tool.title}
+                              subheading={tool.subheading}
+                              tags={tool.tags}
+                            />
+                )
+              })
+            }
+            </div>
         </div>
       </div>
     </>

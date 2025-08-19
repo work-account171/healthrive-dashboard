@@ -2,7 +2,7 @@ import { ListCheck } from "lucide-react"
 
 type TaskCardProps={
     text:string,
-    number:number,
+    number:React.ReactNode ,
     bgColor:string,
     textColor:string,
     borderColor:string
