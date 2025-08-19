@@ -39,11 +39,12 @@ function Login() {
         message: "Network error. Please try again.", 
         variant: "error" 
       });
+      console.error(error)
     }
   };
   return (
     <>
-      <section className="flex justify-cente h-screen items-center bg-[url('/login-bg.svg')] bg-center bg-cover">
+      <section className="flex justify-center h-screen items-center bg-[url('/login-bg.svg')] bg-center bg-cover">
         {toast && (
           <Toaster
             message={toast.message}

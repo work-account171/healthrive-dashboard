@@ -48,7 +48,11 @@ function DisplayTask() {
   }
   function handleDeleteClick(task: Task) {
     setSelectedTask(task);
-    setShowModal(true);
+    if(showModal===false){
+      setShowModal(true);
+    }else{
+      setShowModal(false)
+    }
   }
 
   function confirmDelete() {
@@ -152,8 +156,8 @@ function DisplayTask() {
         </table>
       </div>
       {showModal && (
-          <div className="absolute top-10 right-10 border border-primary bg-white p-3 rounded-xl shadow-md">
-            <p>Are you sure you want to mark this "{selectedTask?.title}" task done?</p>
+          <div className="absolute top-10 right-10  border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
+            <p>Are you sure you want to mark this &apos;{selectedTask?.title}&apos; task done?</p>
             <div className="flex gap-2 w-full mt-4">
               <button
                 onClick={confirmDelete}

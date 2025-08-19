@@ -10,7 +10,7 @@ export async function DELETE(req:NextRequest, { params }:{params:{id:string}}) {
     if(!deletedTask){
         return NextResponse.json({error:"task not found"},{status:404})
     }
-    return NextResponse.json({message:"task successfully deleted"})
+    return NextResponse.json({message:"task successfully deleted"},{status:200})
   } catch (err:unknown) {
     return NextResponse.json({error:err},{status:500})
   }

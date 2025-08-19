@@ -19,7 +19,7 @@ function TaskManager() {
     <>
       {modal ? <AddTaskModal /> : ""}
 
-      <div className="flex flex-col gap-6 ">
+      <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-4 justify-start items-start">
             <h1 className="text-[32px] font-bold">Task Manager</h1>
