@@ -2,56 +2,60 @@
 import { Check, Eye, Info } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Toaster from "../Toaster";
+import TableShimmer from "./TableShimmer";
 type Task = {
-  _id:string,
+  _id: string;
   title: string;
   patientName: string;
   dueDate: string;
   assignee: string;
-  priority: "high" | "low" | "medium";
+  priority: "high" | "normal";
 };
 
 function DisplayTask() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{
-      message: string;
-      variant: "success" | "error" | "warning";
-    } | null>(null);
-  
+    message: string;
+    variant: "success" | "error" | "warning";
+  } | null>(null);
+
   async function fetchTasks() {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
     );
     const data = await res.json();
     setTasks(data);
+    setLoading(false)
     console.log(data);
   }
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  async function taskDone(id:string){
-    const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/update/${id}`,{
-      method:"PATCH",
-    }
+  async function taskDone(id: string) {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/update/${id}`,
+      {
+        method: "PATCH",
+      }
     );
-    if(res.ok){
-      setTasks(tasks.filter(task=>task._id!==id))
-      setToast({ 
-        message: "Task successfully marked as done!", 
-        variant: "success" 
+    if (res.ok) {
+      setTasks(tasks.filter((task) => task._id !== id));
+      setToast({
+        message: "Task successfully marked as done!",
+        variant: "success",
       });
     }
-
   }
   function handleDeleteClick(task: Task) {
     setSelectedTask(task);
-    if(showModal===false){
+    if (showModal === false) {
       setShowModal(true);
-    }else{
-      setShowModal(false)
+    } else {
+      setShowModal(false);
     }
   }
 
@@ -70,17 +74,17 @@ function DisplayTask() {
 
   return (
     <>
-     {toast && (
-          <Toaster
-            message={toast.message}
-            variant={toast.variant}
-            onClose={() => setToast(null)}
-          />
-        )}
-       
-      <div className=" rounded-xl">
+      {toast && (
+        <Toaster
+          message={toast.message}
+          variant={toast.variant}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <div className="rounded-xl bg-orange-400">
         <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
-          <thead className="bg-gray-100 text-black font-medium  text-[16px]">
+          <thead className="bg-gray-100 rounded-xl text-black font-medium  text-[16px]">
             <tr>
               <th className="px-6 py-5">Task</th>
               <th className="px-6 py-5">Patient</th>
@@ -103,9 +107,8 @@ function DisplayTask() {
               <th className="pl-16 py-5">Action</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
+          {/* <tbody className="bg-white divide-y divide-gray-100">
             {tasks.map((task, index) => (
-              
               <tr
                 key={index}
                 className="hover:bg-gray-50 text-[16px] transition duration-150"
@@ -125,7 +128,7 @@ function DisplayTask() {
                     className={`px-2 py-2.5 rounded-xl font-medium ${
                       task.priority === "high"
                         ? "bg-red-600 text-white"
-                        : task.priority === "low"
+                        : task.priority === "normal"
                         ? "bg-yellow-400 text-white"
                         : "bg-blue-100 text-blue-700"
                     }`}
@@ -135,7 +138,10 @@ function DisplayTask() {
                 </td>
                 <td className="px-6 py-4 ">
                   <div className=" flex gap-3 items-center justify-center">
-                    <button onClick={() => handleDeleteClick(task)}  className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer">
+                    <button
+                      onClick={() => handleDeleteClick(task)}
+                      className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer"
+                    >
                       <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
                         Mark as done
                       </span>
@@ -152,27 +158,83 @@ function DisplayTask() {
                 </td>
               </tr>
             ))}
-          </tbody>
+          </tbody> */}
+          {loading ? (
+        <TableShimmer />
+      ) : (
+        <tbody className="bg-white divide-y divide-gray-100">
+          {tasks.map((task, index) => (
+            <tr
+              key={index}
+              className="hover:bg-gray-50 text-[16px] transition duration-150"
+            >
+              <td className="px-6 py-4">{task.title}</td>
+              <td className="px-6 py-4">{task.patientName}</td>
+              <td className="px-6 py-4">
+                {new Date(task.dueDate).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </td>
+              <td className="px-6 py-4">{task.assignee}</td>
+              <td className="px-6 py-4">
+                <span
+                  className={`px-2 py-2.5 rounded-xl font-medium ${
+                    task.priority === "high"
+                      ? "bg-red-600 text-white"
+                      : task.priority === "normal"
+                      ? "bg-yellow-400 text-white"
+                      : "bg-blue-100 text-blue-700"
+                  }`}
+                >
+                  {`${task.priority === "high" ? "Urgent" : "Normal"}`}
+                </span>
+              </td>
+              <td className="px-6 py-4 ">
+                <div className="flex gap-3 items-center justify-center">
+                  <button onClick={() => handleDeleteClick(task)} className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer">
+                    <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
+                      Mark as done
+                    </span>
+                    <Check />
+                  </button>
+
+                  <button className="bg-primary rounded-lg text-white p-2 group relative">
+                    <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
+                      View
+                    </span>
+                    <Eye />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      )}
         </table>
       </div>
       {showModal && (
-          <div className="absolute top-10 right-10  border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
-            <p>Are you sure you want to mark this &apos;{selectedTask?.title}&apos; task done?</p>
-            <div className="flex gap-2 w-full mt-4">
-              <button
-                onClick={confirmDelete}
-                className="bg-primary w-full text-white hover:bg-red-500 px-4 py-2 rounded-lg cursor-pointer"
-              >
-                Yes
-              </button>
-              <button
-                onClick={cancelDelete}
-                className="bg-gray-300 hover:bg-gray-400 w-full px-4 py-2 rounded-lg cursor-pointer"
-              >
-                No
-              </button>
-            </div>
+        <div className="absolute top-10 right-10  border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
+          <p>
+            Are you sure you want to mark this &apos;{selectedTask?.title}&apos;
+            task done?
+          </p>
+          <div className="flex gap-2 w-full mt-4">
+            <button
+              onClick={confirmDelete}
+              className="bg-primary w-full text-white hover:bg-red-500 px-4 py-2 rounded-lg cursor-pointer"
+            >
+              Yes
+            </button>
+            <button
+              onClick={cancelDelete}
+              className="bg-gray-300 hover:bg-gray-400 w-full px-4 py-2 rounded-lg cursor-pointer"
+            >
+              No
+            </button>
           </div>
+        </div>
       )}
     </>
   );

@@ -9,7 +9,7 @@ export interface ITask extends Document {
   assignee: string;
   dueDate: Date;
   services: string[];
-  priority: "low" | "medium" | "high";
+  priority:  "normal" | "high";
   recurrence: string;
   createdAt: Date;
   updatedAt: Date;
@@ -30,8 +30,8 @@ const TaskSchema: Schema = new Schema(
     services: [{ type: String }],
     priority: {
       type: String,
-      enum: ["low", "medium", "high"],
-      default: "medium",
+      enum: [ "normal", "high"],
+      default: "normal",
     },
     recurrence: { type: String },
   },

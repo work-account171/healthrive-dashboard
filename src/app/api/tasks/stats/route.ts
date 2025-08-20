@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 export async function GET(){
   await dbConnect();
 
-  const totalTasks=await Task.countDocuments();
+  const totalTasks=await Task.countDocuments({completed:false});
   const completedTasks = await Task.countDocuments({ completed: true });
 
   const today=new Date();
@@ -21,10 +21,12 @@ export async function GET(){
 
     const tasksToday=await Task.countDocuments({
         dueDate:{$gte:today,$lte:endofToday},
+        completed:false
     })
 
     const tasksThisWeek=await Task.countDocuments({
-        dueDate:{$gte:today,$lte:endofWeek}
+        dueDate:{$gte:today,$lte:endofWeek},
+        completed:false
     })
 
     const overdueTasks=await Task.countDocuments({

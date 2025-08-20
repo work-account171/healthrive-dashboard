@@ -1,7 +1,7 @@
 "use client";
 import AddTaskModal from "@/app/components/task-manager/AddTaskModal";
 import DisplayTask from "@/app/components/task-manager/DisplayTask";
-import { Plus, Search, SlidersHorizontal} from "lucide-react";
+import { Plus, Search, SlidersHorizontal } from "lucide-react";
 import React, { useState } from "react";
 
 function TaskManager() {
@@ -18,6 +18,7 @@ function TaskManager() {
   return (
     <>
       {modal ? <AddTaskModal /> : ""}
+    
 
       <div className="flex flex-col gap-6">
         <div className="flex justify-between items-center">
@@ -29,10 +30,10 @@ function TaskManager() {
           </div>
           <button
             onClick={addTaskModal}
-            className="bg-primary text-white text-[16px] rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
+            className="bg-primary  cursor-pointer hover:bg-white hover:text-primary border border-primary text-white text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
           >
             <Plus />
-            Add Text
+            Add Task
           </button>
         </div>
         <div className="rounded-xl py-6 px-5 flex flex-col gap-5 border border-gray-100">
@@ -49,7 +50,7 @@ function TaskManager() {
             />
           </div>
         </div>
-      <DisplayTask/>
+        <DisplayTask />
       </div>
     </>
   );

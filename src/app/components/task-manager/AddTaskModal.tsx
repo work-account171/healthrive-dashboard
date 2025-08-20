@@ -83,7 +83,6 @@ const [toast, setToast] = useState<{
       priority,
       recurrence: recurrance,
     };
-    console.log('Data being sent to backend:', newTask);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/add-task`, {
         method: "POST",
@@ -116,7 +115,7 @@ const [toast, setToast] = useState<{
           />
         )}
       <div
-        className={`modal bg-white rounded-xl overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
+        className={`modal bg-white rounded-xl left-1/2 transform -translate-x-1/2 overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
           !modal ? "absolute top-2" : "hidden"
         }`}
       >
@@ -279,8 +278,8 @@ const [toast, setToast] = useState<{
                 className="py-4 px-5 w-full bg-gray-100 text-gray-600 rounded-xl"
                 required
               >
-                <option value="medium">Medium</option>
-                <option value="low">Low</option>
+                <option value="">Select Priority</option>
+                <option value="normal">Normal</option>
                 <option value="high">High</option>
               </select>
             </div>
