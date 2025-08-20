@@ -9,7 +9,7 @@ type Task = {
   patientName: string;
   description: string;
   dueDate: Date;
-  services:string[];
+  services: string[];
   categories: string[];
   assignee: string;
   priority: "high" | "normal";
@@ -20,7 +20,7 @@ function DisplayTask() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [completedTask,setcompletedTasks]=useState();
+  const [completedTask, setcompletedTasks] = useState();
   const [loading, setLoading] = useState(true);
   const [sidebar, setSidebar] = useState(false);
   const [toast, setToast] = useState<{
@@ -37,12 +37,13 @@ function DisplayTask() {
     setLoading(false);
     console.log(data);
   }
-  async function stats(){
-    const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/stats`,
-      {method:"GET"}
+  async function stats() {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/stats`,
+      { method: "GET" }
     );
-    const {completedTask,overdueTasks}=await res.json();
-    setcompletedTasks(completedTask)
+    const { completedTask, overdueTasks } = await res.json();
+    setcompletedTasks(completedTask);
   }
   useEffect(() => {
     fetchTasks();
@@ -144,14 +145,17 @@ function DisplayTask() {
               Deadline: {""}
               <span className="font-semibold text-red-500">
                 {selectedTask && (
-  <div>
-    {new Date(selectedTask.dueDate).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}
-  </div>
-)}
+                  <div>
+                    {new Date(selectedTask.dueDate).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </div>
+                )}
               </span>
             </h1>
           </div>
@@ -189,7 +193,6 @@ function DisplayTask() {
             </div>
           </div>
         </div>
-        
       </div>
       <div className="rounded-xl">
         <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
