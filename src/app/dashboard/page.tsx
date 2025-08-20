@@ -66,7 +66,6 @@ export default function Dashboard() {
     );
     const { tasksToday, tasksThisWeek, overdueTasks,totalTasks,completedTasks } = await res.json();
 
-    console.log("TASKS ARE", tasksToday, tasksThisWeek, overdueTasks, completedTasks);
 
     setTodayTask(tasksToday);
     settaskWeek(tasksThisWeek);

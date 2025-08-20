@@ -19,6 +19,6 @@ export async function PATCH(
     
     return NextResponse.json({ message: "Task successfully updated!" }, { status: 200 });
   } catch (err: unknown) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 }); // ✅ Better error message
+    return NextResponse.json({ error: err }, { status: 500 }); // ✅ Better error message
   }
 }

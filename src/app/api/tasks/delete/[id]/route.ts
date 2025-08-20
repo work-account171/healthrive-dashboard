@@ -18,6 +18,6 @@ export async function DELETE(
     
     return NextResponse.json({ message: "Task deleted successfully" }, { status: 200 });
   } catch (err: unknown) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error:err }, { status: 500 });
   }
 }

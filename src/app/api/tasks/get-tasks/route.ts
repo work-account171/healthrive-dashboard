@@ -48,7 +48,7 @@ export async function GET(req: Request) {
     
     const tasks = await Task.find(filter).sort({ createdAt: -1 });
     return NextResponse.json(tasks);
-  } catch (error: unknown) {
-    return NextResponse.json({ error: "Failed to fetch tasks" }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: err }, { status: 500 });
   }
 }

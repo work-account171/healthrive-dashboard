@@ -11,7 +11,7 @@ type Tasks = {
   assignee: string;
   priority: "high" | "normal";
 };
-function completedTask() {
+function CompletedTask() {
   const [completedTasks, setCompletedTasks] = useState<Tasks[]>([]);
   const [loading, setLoading] = useState(true);
   async function fetchTasks() {
@@ -21,7 +21,6 @@ function completedTask() {
     const tasks = await res.json();
     setCompletedTasks(tasks);
     setLoading(false);
-    console.log(tasks);
   }
   useEffect(() => {
     fetchTasks();
@@ -105,4 +104,4 @@ function completedTask() {
   );
 }
 
-export default completedTask;
+export default CompletedTask;
