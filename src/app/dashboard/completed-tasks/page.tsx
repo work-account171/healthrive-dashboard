@@ -43,7 +43,7 @@ function CompletedTask() {
       method:"PATCH"
     })
     if(res.ok){
-      setTasks(tasks.filter((task) => task._id !== id));
+      setCompletedTasks(completedTasks.filter((task) => task._id !== id));
       setToast({
         message: "Task successfully marked as incomplete!",
         variant: "success",
