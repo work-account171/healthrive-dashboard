@@ -82,7 +82,7 @@ function DisplayTask() {
         />
       )}
 
-      <div className="rounded-xl bg-orange-400">
+      <div className="rounded-xl">
         <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
           <thead className="bg-gray-100 rounded-xl text-black font-medium  text-[16px]">
             <tr>

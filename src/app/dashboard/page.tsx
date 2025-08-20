@@ -93,6 +93,7 @@ export default function Dashboard() {
             borderColor="border-red-400"
             textColor="text-red-600"
             text="Overdue Tasks"
+            link="/dashboard/task-manager"
             number={loading?<NumberShimmer/>:totalTasks}
           />
           <TaskCard
@@ -100,6 +101,7 @@ export default function Dashboard() {
             borderColor="border-yellow-400"
             textColor="text-yellow-600"
             text="Due Today"
+            link="#"
             number={loading?<NumberShimmer/>:taskToday}
           />
           <TaskCard
@@ -107,6 +109,7 @@ export default function Dashboard() {
             borderColor="border-blue-400"
             textColor="text-blue-600"
             text="This Week"
+            link="#"
             number={loading?<NumberShimmer/>:taskWeek}
           />
           <TaskCard
@@ -114,6 +117,7 @@ export default function Dashboard() {
             borderColor="border-green-400"
             textColor="text-green-600"
             text="Completed"
+            link="/dashboard/completed-tasks"
             number={loading?<NumberShimmer/>:completedTask}
           />
         </div>
