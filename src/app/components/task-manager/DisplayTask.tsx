@@ -12,6 +12,7 @@ type Task = {
   services: string[];
   categories: string[];
   assignee: string;
+  attachments:string[];
   priority: "high" | "normal";
   updatedAt: Date;
 };
@@ -175,6 +176,30 @@ function DisplayTask() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-[16px] ">Linked services: {""}</h1>
+            <div className="flex justify-start itmes-start gap-2">
+              {selectedTask?.services.map((service) => {
+                return (
+                  <div
+                    key={service}
+                    className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
+                  >
+                    {service}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
+          <h1 className="text-black text-xl">Attachments</h1>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-[16px] ">Files uploaded:</h1>
+            <div className="flex justify-start itmes-start gap-2">
+              {selectedTask?.attachments}
             </div>
           </div>
           <div className="flex flex-col gap-1">
