@@ -1,43 +1,92 @@
 "use client";
+import ConfirmationModal from "@/app/components/confirmModal";
 import TableShimmer from "@/app/components/task-manager/TableShimmer";
 import Toaster from "@/app/components/Toaster";
-import { Delete, Download, Eye, File, FileText, Image, Trash, Undo2, X } from "lucide-react";
+import {
+  Delete,
+  Download,
+  Eye,
+  File,
+  FileText,
+  Image,
+  Trash,
+  Undo2,
+  X,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 type Tasks = {
   _id: string;
   title: string;
   patientName: string;
-  description:string;
-  services:string[];
-  categories:string[];
+  description: string;
+  services: string[];
+  categories: string[];
   dueDate: string;
   assignee: string;
   priority: "high" | "normal";
-  attachments:Attachment[]
+  attachments: Attachment[];
 };
-type Attachment={
-  id:string,
-  name:string,
-  size:number,
-  type:string,
-  url:string,
-  uploadedAt:string
-}
+
+type Attachment = {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  uploadedAt: string;
+};
 function CompletedTask() {
   const [completedTasks, setCompletedTasks] = useState<Tasks[]>([]);
-  const [showModal,setShowModal]=useState(false)
-  const [sidebar,setSidebar]=useState(false);
-  const [selectedTask,setSelectedTask]=useState<Tasks|null>(null)
-      const [toast, setToast] = useState<{
-        message: string;
-        variant: "success" | "error" | "warning";
-      } | null>(null);
-  
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    confirmText?: string;
+    confirmColor?: "primary" | "danger" | "success";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => {},
+    confirmText: "Yes",
+    confirmColor: "primary",
+  });
+
+  function handleIncomplete(task: Tasks) {
+    setModalConfig({
+      isOpen: true,
+      title: "Mark Task Incomplete",
+      message: `Are you sure you want to mark '${task.title}' as incomplete?`,
+      onConfirm: () => updateStatus(task._id),
+      confirmText: "Yes, Mark Incomplete",
+      confirmColor: "primary",
+    });
+  }
+
+  // Function to show delete confirmation
+  function handleDelete(task: Tasks) {
+    setModalConfig({
+      isOpen: true,
+      title: "Delete Task",
+      message: `Are you sure you want to delete '${task.title}'? This action cannot be undone.`,
+      onConfirm: () => deleteTask(task._id),
+      confirmText: "Yes, Delete",
+      confirmColor: "danger",
+    });
+  }
+  const [sidebar, setSidebar] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Tasks | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    variant: "success" | "error" | "warning";
+  } | null>(null);
+
   const [loading, setLoading] = useState(true);
   async function fetchTasks() {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=true`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=true`
     );
     const tasks = await res.json();
     setCompletedTasks(tasks);
@@ -46,67 +95,56 @@ function CompletedTask() {
   useEffect(() => {
     fetchTasks();
   }, []);
-  async function updateStatus(id:string){
-    const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/update/${id}`,{
-      method:"PATCH"
-    })
-    if(res.ok){
+  async function updateStatus(id: string) {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/update/${id}`,
+      {
+        method: "PATCH",
+      }
+    );
+    if (res.ok) {
       setCompletedTasks(completedTasks.filter((task) => task._id !== id));
       setToast({
         message: "Task successfully marked as incomplete!",
         variant: "success",
       });
       setSidebar(false);
+      closeModal();
     }
   }
-  function handleIncomplete(task:Tasks){
 
-        setSelectedTask(task);
-
-    if (showModal === false) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
-  }
-  
-  function cancelComplete() {
-    setShowModal(false);
-    setSelectedTask(null);
-  }
-  function confirmComplete() {
-    if (selectedTask) {
-      updateStatus(selectedTask._id);
-    }
-    setShowModal(false);
-    setSelectedTask(null);
-  }
-
-  async function deleteTask(id:string){
-    const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/delete/${id}`,{
-      method:"DELETE"
-    })
-    if(res.ok){
+ 
+  async function deleteTask(id: string) {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/delete/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (res.ok) {
       setToast({
-        message:"task deleted successfully!",
-        variant:"success"
-      })
-      setSidebar(false)
-        fetchTasks();
-     
+        message: "task deleted successfully!",
+        variant: "success",
+      });
+      setSidebar(false);
+      closeModal();
+      fetchTasks();
     }
+  }
+  function closeModal() {
+    setModalConfig((prev) => ({ ...prev, isOpen: false }));
   }
 
   return (
     <>
-    {toast && (
+      {toast && (
         <Toaster
           message={toast.message}
           variant={toast.variant}
           onClose={() => setToast(null)}
         />
       )}
-     <div
+      <div
         className={`sidebar ${
           sidebar ? "translate-x-0" : "translate-x-full"
         } fixed transition-transform duration-300 ease-in-out w-1/3 z-10 p-8 flex flex-col gap-6 border border-primary bg-white h-screen top-0 right-0`}
@@ -139,15 +177,20 @@ function CompletedTask() {
           <p className="text-gray-600 text-[16px]">
             {selectedTask?.description}
           </p>
-          <button onClick={()=>selectedTask && handleIncomplete(selectedTask)} className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2 5">
-            <Undo2/>
+          <button
+            onClick={() => selectedTask && handleIncomplete(selectedTask)}
+            className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2 5"
+          >
+            <Undo2 />
             Undo Complete
           </button>
-          <button onClick={()=>selectedTask && deleteTask(selectedTask._id)} className="cursor-pointer bg-red-600 hover:bg-red-500 px-4 py-2 rounded-xl w-fit text-white flex gap-2 5">
-            <Trash/>
+          <button
+            onClick={() => selectedTask && handleDelete(selectedTask)}
+            className="cursor-pointer bg-red-600 hover:bg-red-500 px-4 py-2 rounded-xl w-fit text-white flex gap-2 5"
+          >
+            <Trash />
             Delete Task
           </button>
-
         </div>
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 text-primary w-full">
           <h1 className="text-black text-xl">Task Information</h1>
@@ -303,16 +346,23 @@ function CompletedTask() {
                       </td>
                       <td className="px-6 py-4 ">
                         <div className="flex gap-3 items-center justify-center">
-                          <button onClick={()=>handleIncomplete(task)} className="bg-red-500 group relative rounded-lg text-white p-2 cursor-pointer">
+                          <button
+                            onClick={() => handleIncomplete(task)}
+                            className="bg-red-500 group relative rounded-lg text-white p-2 cursor-pointer"
+                          >
                             <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
                               Mark as incomplete
                             </span>
-                            <Undo2/>
+                            <Undo2 />
                           </button>
 
-                          <button onClick={()=>{setSidebar(true);
-                            setSelectedTask(task)
-                          }} className="bg-primary rounded-lg text-white p-2 group relative">
+                          <button
+                            onClick={() => {
+                              setSidebar(true);
+                              setSelectedTask(task);
+                            }}
+                            className="bg-primary rounded-lg text-white p-2 group relative"
+                          >
                             <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
                               View
                             </span>
@@ -328,28 +378,15 @@ function CompletedTask() {
           </div>
         </div>
       </div>
-      {showModal && (
-        <div className="absolute z-50 top-10 right-10  border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
-          <p>
-            Are you sure you want to mark this &apos;{selectedTask?.title}&apos;
-            task incomplete?
-          </p>
-          <div className="flex gap-2 w-full mt-4">
-            <button
-              onClick={confirmComplete}
-              className="bg-primary w-full text-white hover:bg-red-500 px-4 py-2 rounded-lg cursor-pointer"
-            >
-              Yes
-            </button>
-            <button
-              onClick={cancelComplete}
-              className="bg-gray-300 hover:bg-gray-400 w-full px-4 py-2 rounded-lg cursor-pointer"
-            >
-              No
-            </button>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={modalConfig.isOpen}
+        onClose={closeModal}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        confirmColor={modalConfig.confirmColor}
+      />
     </>
   );
 }
