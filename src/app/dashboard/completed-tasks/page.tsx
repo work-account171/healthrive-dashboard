@@ -3,7 +3,6 @@ import ConfirmationModal from "@/app/components/confirmModal";
 import TableShimmer from "@/app/components/task-manager/TableShimmer";
 import Toaster from "@/app/components/Toaster";
 import {
-  Delete,
   Download,
   Eye,
   File,
