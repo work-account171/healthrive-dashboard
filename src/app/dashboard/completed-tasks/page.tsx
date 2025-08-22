@@ -1,7 +1,7 @@
 "use client";
 import TableShimmer from "@/app/components/task-manager/TableShimmer";
 import Toaster from "@/app/components/Toaster";
-import { Download, Eye, File, FileText, Image, Undo2, X } from "lucide-react";
+import { Delete, Download, Eye, File, FileText, Image, Trash, Undo2, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 type Tasks = {
@@ -82,6 +82,21 @@ function CompletedTask() {
     setSelectedTask(null);
   }
 
+  async function deleteTask(id:string){
+    const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/delete/${id}`,{
+      method:"DELETE"
+    })
+    if(res.ok){
+      setToast({
+        message:"task deleted successfully!",
+        variant:"success"
+      })
+      setSidebar(false)
+        fetchTasks();
+     
+    }
+  }
+
   return (
     <>
     {toast && (
@@ -128,6 +143,11 @@ function CompletedTask() {
             <Undo2/>
             Undo Complete
           </button>
+          <button onClick={()=>selectedTask && deleteTask(selectedTask._id)} className="cursor-pointer bg-red-600 hover:bg-red-500 px-4 py-2 rounded-xl w-fit text-white flex gap-2 5">
+            <Trash/>
+            Delete Task
+          </button>
+
         </div>
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 text-primary w-full">
           <h1 className="text-black text-xl">Task Information</h1>
