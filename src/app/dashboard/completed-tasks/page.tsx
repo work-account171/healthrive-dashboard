@@ -1,7 +1,7 @@
 "use client";
 import TableShimmer from "@/app/components/task-manager/TableShimmer";
 import Toaster from "@/app/components/Toaster";
-import { Eye, Undo2, X } from "lucide-react";
+import { Download, Eye, File, FileText, Image, Undo2, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 type Tasks = {
@@ -14,13 +14,21 @@ type Tasks = {
   dueDate: string;
   assignee: string;
   priority: "high" | "normal";
+  attachments:Attachment[]
 };
+type Attachment={
+  id:string,
+  name:string,
+  size:number,
+  type:string,
+  url:string,
+  uploadedAt:string
+}
 function CompletedTask() {
   const [completedTasks, setCompletedTasks] = useState<Tasks[]>([]);
   const [showModal,setShowModal]=useState(false)
   const [sidebar,setSidebar]=useState(false);
   const [selectedTask,setSelectedTask]=useState<Tasks|null>(null)
-    const [tasks, setTasks] = useState<Tasks[]>([]);
       const [toast, setToast] = useState<{
         message: string;
         variant: "success" | "error" | "warning";
@@ -178,6 +186,51 @@ function CompletedTask() {
                 );
               })}
             </div>
+          </div>
+        </div>
+        <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
+          <h1 className="text-black text-xl">Attachments</h1>
+          <div className="flex flex-col gap-3">
+            {selectedTask?.attachments &&
+            selectedTask.attachments.length > 0 ? (
+              selectedTask.attachments.map((attachment) => (
+                <div
+                  key={attachment.id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <div className="flex items-center space-x-3">
+                    {/* File icon based on type */}
+                    {attachment.type.includes("pdf") ? (
+                      <FileText className="w-5 h-5 text-red-500" />
+                    ) : attachment.type.includes("image") ? (
+                      <Image className="w-5 h-5 text-blue-500" />
+                    ) : (
+                      <File className="w-5 h-5 text-gray-500" />
+                    )}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-900 truncate max-w-xs">
+                        {attachment.name}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {Math.round(attachment.size / 1024)} KB •{" "}
+                        {new Date(attachment.uploadedAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => window.open(attachment.url, "_blank")}
+                    className="p-2 text-gray-500 hover:text-blue-600 transition-colors"
+                    title="Download file"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">
+                No files attached to this task
+              </p>
+            )}
           </div>
         </div>
       </div>
