@@ -56,5 +56,6 @@ export async function PATCH(
     
   } catch (err: unknown) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.log(err)
   }
 }

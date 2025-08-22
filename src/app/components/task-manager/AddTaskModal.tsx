@@ -3,7 +3,6 @@ import { Download, Trash2, Upload, X } from "lucide-react";
 import React, { useState } from "react";
 import { useRef } from "react";
 import Toaster from "../Toaster";
-import { R2Service } from "@/app/lib/cloudflare";
 
 const categoriesList = [
   "Labs",
@@ -74,6 +73,7 @@ function AddTaskModal() {
         message: "Some files failed to upload",
         variant: "error",
       });
+      console.log(error)
     }
   };
   const removeFile = (fileName: string) => {

@@ -50,7 +50,7 @@ function TaskManager() {
             />
           </div>
         </div>
-        <DisplayTask />
+        <DisplayTask/>
       </div>
     </>
   );
