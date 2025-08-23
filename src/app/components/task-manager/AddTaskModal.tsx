@@ -116,7 +116,7 @@ function AddTaskModal() {
       formData.append("file", file);
 
       // Upload through our API route
-      const response = await fetch("/api/tasks/file-upload", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/file-upload`, {
         method: "POST",
         body: formData,
       });
