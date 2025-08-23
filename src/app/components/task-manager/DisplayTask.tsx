@@ -1,6 +1,7 @@
 "use client";
 import {
   Check,
+  CheckCheckIcon,
   Download,
   Edit,
   Eye,
@@ -86,6 +87,10 @@ export default function DisplayTask() {
     
     if (!titleMatch && !patientNameMatch) return false;
   }
+
+  async function editTask(){
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URl}/api/tasks/edit/[id]`)
+  }
   
   // Due date filter (independent - shows only tasks matching the selected date filter)
   if (dueDateFilter !== "All Dates") {
@@ -155,6 +160,8 @@ export default function DisplayTask() {
   function confirmDelete() {
     if (selectedTask) {
       taskDone(selectedTask._id);
+      setSidebar(false);
+
     }
     setShowModal(false);
     setSelectedTask(null);
@@ -191,6 +198,8 @@ export default function DisplayTask() {
           Add Task
         </button>
       </div>
+
+      {/* filter search bar */}
       <div className="rounded-xl py-6 px-5 flex flex-col gap-5 border border-gray-100">
         <div className="flex justify-start text-2xl font-bold items-center gap-3.5">
           <SlidersHorizontal />
@@ -268,6 +277,7 @@ export default function DisplayTask() {
           </div>
         </div>
       )}
+      {/* sidebar after clicking view starts from here */}
       <div
         className={`sidebar ${
           sidebar ? "translate-x-0" : "translate-x-full"
@@ -301,9 +311,9 @@ export default function DisplayTask() {
           <p className="text-gray-600 text-[16px]">
             {selectedTask?.description}
           </p>
-          <button className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2 5">
-            <Edit />
-            Edit Task
+          <button onClick={confirmDelete} className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2 5">
+            <CheckCheckIcon/>
+            Mark as Done
           </button>
         </div>
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 text-primary w-full">
@@ -411,6 +421,8 @@ export default function DisplayTask() {
           </div>
         </div>
       </div>
+
+      {/* display tasks-table starts from here  */}
       <div className="rounded-xl relative">
         <div
           className="absolute top-5 right-5 z-5 text-black group"
@@ -510,8 +522,11 @@ export default function DisplayTask() {
           )}
         </table>
       </div>
+
+
+      {/* modal on clicking tak mark as done */}
       {showModal && (
-        <div className="absolute top-10 right-10  border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
+        <div className="absolute top-10 right-10 z-50  border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
           <p>
             Are you sure you want to mark this &apos;{selectedTask?.title}
             &apos; task done?
