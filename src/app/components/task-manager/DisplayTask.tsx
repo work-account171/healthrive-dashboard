@@ -209,7 +209,7 @@ export default function DisplayTask() {
           <select
             value={dueDateFilter}
             onChange={(e) => setDueDateFilter(e.target.value)}
-            className="py-3 px-4 border border-gray-200 text-sm bg-white rounded-xl w-40"
+            className="py-3 px-4 border border-gray-200 text-[16px] bg-white rounded-xl w-40"
           >
             <option value="All Dates">All Dates</option>
             <option value="Due Today">Due Today</option>
@@ -220,7 +220,7 @@ export default function DisplayTask() {
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="py-3 px-4 border border-gray-200 text-sm bg-white rounded-xl w-40"
+            className="py-3 px-4  text-[16px] border border-gray-200 text-sm bg-white rounded-xl w-40"
           >
             <option value="All Priorities">All Priorities</option>
             <option value="Urgent">Urgent</option>
