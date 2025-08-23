@@ -13,8 +13,10 @@ const r2Client = new S3Client({
     accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
     secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
   },
+  
 });
 const BUCKET_NAME = process.env.CLOUDFLARE_R2_BUCKET_NAME!;
+
 export class R2Service {
   /**
    * Upload a file to R2

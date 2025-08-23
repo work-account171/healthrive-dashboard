@@ -8,11 +8,16 @@ import {
   FileText,
   Image,
   Info,
+  Plus,
+  RefreshCwIcon,
+  Search,
+  SlidersHorizontal,
   X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Toaster from "../Toaster";
 import TableShimmer from "./TableShimmer";
+import AddTaskModal from "./AddTaskModal";
 type Attachment = {
   id: string;
   name: string;
@@ -39,13 +44,28 @@ type Task = {
 export default function DisplayTask() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dueDateFilter, setDueDateFilter] = useState<string>("All Dates");
+  const [priorityFilter, setPriorityFilter] =
+    useState<string>("All Priorities");
   const [sidebar, setSidebar] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
     variant: "success" | "error" | "warning";
   } | null>(null);
+  const [modal, setModal] = useState(false);
+
+  const addTaskModal = async () => {
+    if (modal === true) {
+      setModal(false);
+      fetchTasks();
+    } else {
+      setModal(true);
+      fetchTasks();
+    }
+  };
 
   async function fetchTasks() {
     const res = await fetch(
@@ -56,7 +76,54 @@ export default function DisplayTask() {
     setLoading(false);
     console.log(data);
   }
+  const filteredTasks = tasks.filter((task) => {
+     if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    const titleMatch = task.title.toLowerCase().includes(query);
+    const patientNameMatch = task.patientName 
+      ? task.patientName.toLowerCase().includes(query)
+      : false;
+    
+    if (!titleMatch && !patientNameMatch) return false;
+  }
   
+  // Due date filter (independent - shows only tasks matching the selected date filter)
+  if (dueDateFilter !== "All Dates") {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const taskDueDate = new Date(task.dueDate);
+    taskDueDate.setHours(0, 0, 0, 0);
+    
+    if (dueDateFilter === "Due Today") {
+      if (taskDueDate.getTime() !== today.getTime()) return false;
+    } 
+    else if (dueDateFilter === "Due This Week") {
+      // Get start of week (Monday)
+      const startOfWeek = new Date(today);
+      const day = today.getDay();
+      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+      startOfWeek.setDate(diff);
+      startOfWeek.setHours(0, 0, 0, 0);
+      
+      // Get end of week (Sunday)
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setHours(23, 59, 59, 999);
+      
+      if (taskDueDate < startOfWeek || taskDueDate > endOfWeek) return false;
+    }
+  }
+  
+  // Priority filter (independent - shows only tasks matching the selected priority)
+  if (priorityFilter !== "All Priorities") {
+    if (priorityFilter === "Urgent" && task.priority !== "high") return false;
+    if (priorityFilter === "Normal" && task.priority !== "normal") return false;
+  }
+  
+  return true;
+  });
+
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -100,12 +167,106 @@ export default function DisplayTask() {
 
   return (
     <>
+      {modal ? <AddTaskModal /> : ""}
+
       {toast && (
         <Toaster
           message={toast.message}
           variant={toast.variant}
           onClose={() => setToast(null)}
         />
+      )}
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-4 justify-start items-start">
+          <h1 className="text-[32px] font-bold">Task Manager</h1>
+          <p className="text-[16px]">
+            Manage clinical and administrative tasks for your practice.
+          </p>
+        </div>
+        <button
+          onClick={addTaskModal}
+          className="bg-primary  cursor-pointer hover:bg-white hover:text-primary border border-primary text-white text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
+        >
+          <Plus />
+          Add Task
+        </button>
+      </div>
+      <div className="rounded-xl py-6 px-5 flex flex-col gap-5 border border-gray-100">
+        <div className="flex justify-start text-2xl font-bold items-center gap-3.5">
+          <SlidersHorizontal />
+          Filters & Controls
+        </div>
+        <div className="flex justify-start items-start gap-6 w-full">
+          <div className="py-3 px-4 flex justify-start items-center w-full bg-gray-100 gap-2.5 rounded-xl border border-gray-200 ">
+            <Search />
+            <input
+              type="text"
+              className="w-full outline-0"
+              placeholder="Search by patient name or task.."
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <select
+            value={dueDateFilter}
+            onChange={(e) => setDueDateFilter(e.target.value)}
+            className="py-3 px-4 border border-gray-200 text-sm bg-white rounded-xl w-40"
+          >
+            <option value="All Dates">All Dates</option>
+            <option value="Due Today">Due Today</option>
+            <option value="Due This Week">Due This Week</option>
+          </select>
+
+          {/* Priority Filter */}
+          <select
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+            className="py-3 px-4 border border-gray-200 text-sm bg-white rounded-xl w-40"
+          >
+            <option value="All Priorities">All Priorities</option>
+            <option value="Urgent">Urgent</option>
+            <option value="Normal">Normal</option>
+          </select>
+          {(dueDateFilter !== "All Dates" ||
+            priorityFilter !== "All Priorities" ||
+            searchQuery) && (
+            <button
+              onClick={() => {
+                setDueDateFilter("All Dates");
+                setPriorityFilter("All Priorities");
+                setSearchQuery("");
+              }}
+              className="py-2 px-4 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-xl"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
+      </div>
+      {(dueDateFilter !== "All Dates" ||
+        priorityFilter !== "All Priorities" ||
+        searchQuery) && (
+        <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+          <p className="text-sm font-medium text-blue-800 mb-2">
+            Active Filters:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {dueDateFilter !== "All Dates" && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                {dueDateFilter} 📅
+              </span>
+            )}
+            {priorityFilter !== "All Priorities" && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                {priorityFilter} {priorityFilter === "Urgent" ? "⚠️" : "✅"}
+              </span>
+            )}
+            {searchQuery && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                Search: "{searchQuery}" 🔍
+              </span>
+            )}
+          </div>
+        </div>
       )}
       <div
         className={`sidebar ${
@@ -250,7 +411,16 @@ export default function DisplayTask() {
           </div>
         </div>
       </div>
-      <div className="rounded-xl">
+      <div className="rounded-xl relative">
+        <div
+          className="absolute top-5 right-5 z-5 text-black group"
+          onClick={() => fetchTasks()}
+        >
+          <RefreshCwIcon />
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
+            Refresh
+          </span>
+        </div>
         <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
           <thead className="bg-gray-100 rounded-xl text-black font-medium  text-[16px]">
             <tr>
@@ -272,7 +442,7 @@ export default function DisplayTask() {
                   </div>
                 </div>
               </th>
-              <th className="pl-16 py-5">Action</th>
+              <th className="pl-28 py-5">Action</th>
             </tr>
           </thead>
 
@@ -280,7 +450,7 @@ export default function DisplayTask() {
             <TableShimmer />
           ) : (
             <tbody className="bg-white divide-y divide-gray-100">
-              {tasks.map((task, index) => (
+              {filteredTasks.map((task, index) => (
                 <tr
                   key={index}
                   className="hover:bg-gray-50 text-[16px] transition duration-150"
@@ -308,7 +478,7 @@ export default function DisplayTask() {
                       {`${task.priority === "high" ? "Urgent" : "Normal"}`}
                     </span>
                   </td>
-                  <td className="px-6 py-4 ">
+                  <td className="pl-6 py-4 ">
                     <div className="flex gap-3 items-center justify-center">
                       <button
                         onClick={() => handleDeleteClick(task)}

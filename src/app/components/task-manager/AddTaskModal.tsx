@@ -225,7 +225,7 @@ function AddTaskModal() {
         />
       )}
       <div
-        className={`modal bg-white rounded-xl left-1/2 transform -translate-x-1/2 overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
+        className={`modal z-20 bg-white rounded-xl left-1/2 transform -translate-x-1/2 overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
           !modal ? "absolute top-2" : "hidden"
         }`}
       >
