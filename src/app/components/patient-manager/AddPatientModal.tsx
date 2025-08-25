@@ -22,9 +22,9 @@ export interface UploadedFile {
 }
 const linkedServices = ["Healthie", "Spruce", "CoverMyMeds", "Google Calender"];
 const AddPatientModal=()=> {
-      const [title, setTitle] = useState("");
-      const [patientName, setPatientName] = useState("");
-      const [taskDesc, setTaskDesc] = useState("");
+      const [name, setName] = useState("");
+      const [carePhase,setCarePhase]=useState("")
+      const [patientDesc, setPatientDesc] = useState("");
       const [selected, setSelected] = useState<string[]>([]);
       const [services, setServices] = useState<string[]>([]);
       const [selectedAssignee, setSelectedAssignee] = useState("");
@@ -170,11 +170,10 @@ const AddPatientModal=()=> {
         e.preventDefault();
         setLoading(true);
     
-        const newTask = {
-          title,
-          description: taskDesc,
-          patientName,
-          completed: false,
+        const newPatient = {
+          name:name,
+          description: patientDesc,
+          carePhase,
           categories: selected,
           assignee: selectedAssignee,
           dueDate,
@@ -185,25 +184,25 @@ const AddPatientModal=()=> {
         };
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/add-task`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/add-patient`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" }, // ✅
-              body: JSON.stringify(newTask),
+              body: JSON.stringify(newPatient),
             }
           );
     
           const data = await res.json();
-          console.log("saved task", data);
+          console.log("saved patient", data);
           if (res.ok && data.success) {
             setModal(true);
             setToast({
-              message: "Task successfully added",
+              message: "Patient successfully added",
               variant: "success",
             });
           }
         } catch (error: unknown) {
-          console.error("error while adding task", error);
+          console.error("error while adding patinets", error);
         } finally {
           setLoading(false);
         }
@@ -247,42 +246,43 @@ const AddPatientModal=()=> {
         >
           <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="title">
-                Task Title <span className="text-red-500 font-semibold">*</span>
+              <label htmlFor="name">
+                Patient Name 
               </label>
               <input
                 type="text"
-                name="title"
+                name="name"
                 required
-                value={title}
+                value={name}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter task title"
-                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter Patient Name"
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="title">Patient Name (optional)</label>
+              <label htmlFor="carePhase">Care Phase <span className="text-red-500 font-semibold">*</span></label>
               <input
                 type="text"
-                name="title"
-                value={patientName}
+                name="carePhase"
+                required
+                value={carePhase}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter patient name ..."
-                onChange={(e) => setPatientName(e.target.value)}
+                placeholder="Enter Care Phase i.e  ongoing, new care, stable"
+                onChange={(e) => setCarePhase(e.target.value)}
               />
             </div>
           </div>
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
-            <label htmlFor="title">
+            <label htmlFor="patientDesc">
               Description <span className="text-red-500 font-semibold">*</span>
             </label>
             <textarea
-              name="title"
-              value={taskDesc}
+              name="patientDesc"
+              value={patientDesc}
               required
               className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-              placeholder="Enter task description..."
-              onChange={(e) => setTaskDesc(e.target.value)}
+              placeholder="Enter patient description..."
+              onChange={(e) => setPatientDesc(e.target.value)}
             />
           </div>
 
@@ -357,7 +357,7 @@ const AddPatientModal=()=> {
               </select>
             </div>
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="title">
+              <label htmlFor="dueDate">
                 Due Date
                 <span className="text-red-500 font-semibold">*</span>
               </label>
@@ -388,24 +388,11 @@ const AddPatientModal=()=> {
                 required
               >
                 <option value="">Select Priority</option>
-                <option value="normal">Normal</option>
-                <option value="high">High</option>
+                <option value="safe">Normal</option>
+                <option value="emergency">Emergency</option>
               </select>
             </div>
-            <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="assignee">Recurrence</label>
-              <select
-                name="recurrance"
-                id="recurrance"
-                value={recurrance}
-                onChange={(e) => setRecurrence(e.target.value)}
-                className="py-4 px-5 w-full bg-gray-100 text-gray-600 rounded-xl"
-                required
-              >
-                <option value="daily">Daily</option>
-                <option value="monthly">Monthly</option>
-              </select>
-            </div>
+            
           </div>
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
             <div>
