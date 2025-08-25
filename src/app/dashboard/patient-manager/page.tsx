@@ -1,10 +1,10 @@
-import DisplayTask from '@/app/components/task-manager/DisplayTask'
+import DisplayPatient from '@/app/components/patient-manager/DisplayPatient'
 import React from 'react'
 
 function PatientManager() {
   return (
     <>
-    <DisplayTask/>
+    <DisplayPatient/>
     </>
   )
 }
