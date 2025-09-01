@@ -1,30 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserRoleCard from './UserRoleCard';
 import AddUserModal from './AddUserModel'; // adjust this import based on your file structure
+type User={
+  id:string,
+  name:string,
+  email:string,
+  password:string,
+  role:string,
+
+}
 
 const UserRolesAccess = () => {
+  const [users,setUsers]=useState<User[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false);
+  async function fetchUsers(){
+    const res= await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/get-users`);
+    const data=await res.json();
+    setUsers(data)
+  }
+  useEffect(()=>{
+    fetchUsers();
+  },[])
 
   return (
     <div className="p-[20px] w-full">
       <h2 className="text-xl font-medium mb-4">User Roles & Access Control</h2>
 
-      <div>
-        <UserRoleCard
-          name="Dr. Chioma"
-          email="chioma@clinic.com"
+     
+      {users.map((user,index)=>{
+        return(
+          <div key={index}>
+            <UserRoleCard
+          name={user.name}
+          email={user.email}
           lastLogin="2025-08-06 09:30 AM"
           status="Active"
-          role="Admin"
+          role={user.role}
           permissions={[
             'Full access to all settings and data',
             'Manage users and permissions',
             'Access all tools and integrations',
           ]}
         />
-      </div>
+          </div>
+        )
+      })}
 
       <button
         onClick={() => setIsModalOpen(true)}

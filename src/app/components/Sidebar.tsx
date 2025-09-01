@@ -5,6 +5,7 @@ import dashboardIcon from "@/../public/icons/dashboard.svg"
 import settingIcon from "@/../public/icons/settings.svg"
 import calenderIcon from "@/../public/icons/calender.svg"
 import patientIcon from "@/../public/icons/patient.svg"
+import LinkIcon from "@/../public/icons/link.svg"
 import Image from "next/image"
 import { LogOutIcon } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
@@ -17,7 +18,7 @@ function Sidebars() {
     },
     { href: "/dashboard/task-manager", label: "Task Manager", icon: taskIcon },
     { href: "/dashboard/patient-manager", label: "Patient Management", icon: patientIcon },
-    { href: "/dashboard/linked-tools", label: "Linked Tools", icon: patientIcon },
+    { href: "/dashboard/linked-tools", label: "Linked Tools", icon: LinkIcon },
     { href: "/dashboard/calender", label: "Calender", icon: calenderIcon },
     { href: "/dashboard/settings", label: "Setting", icon: settingIcon },
   ]
