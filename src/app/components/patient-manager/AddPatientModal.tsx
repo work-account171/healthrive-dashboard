@@ -573,7 +573,7 @@ const AddPatientModal=()=> {
               disabled={loading}
               className="py-4 px-6 border border-primary rounded-xl bg-primary hover:bg-white hover:text-primary text-white"
             >
-              {loading ? "Adding..." : "Add Task"}
+              {loading ? "Adding..." : "Add Patient"}
             </button>
           </div>
         </form>

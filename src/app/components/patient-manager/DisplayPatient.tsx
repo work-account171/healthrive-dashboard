@@ -458,7 +458,7 @@ function DisplayPatient() {
                     <span
                       className={`px-2 py-2.5 rounded-xl font-medium ${
                         patient.priority === "emergency"
-                          ? "bg-red-600 text-white"
+                          ? "bg-red-400 text-white"
                           : patient.priority === "safe"
                           ? "bg-yellow-400 text-white"
                           : "bg-blue-100 text-blue-700"
@@ -466,7 +466,7 @@ function DisplayPatient() {
                     >
                       {`${
                         patient.priority === "emergency"
-                          ? "Emergency🚨"
+                          ? "Emergency 🚨"
                           : "Safe"
                       }`}
                     </span>
