@@ -64,7 +64,7 @@ export default function DisplayTask() {
       fetchTasks();
     } else {
       setModal(true);
-      fetchTasks();
+      fetchTasks(); 
     }
   };
 
@@ -88,9 +88,7 @@ export default function DisplayTask() {
     if (!titleMatch && !patientNameMatch) return false;
   }
 
-  async function editTask(){
-    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URl}/api/tasks/edit/[id]`)
-  }
+  
   
   // Due date filter (independent - shows only tasks matching the selected date filter)
   if (dueDateFilter !== "All Dates") {
