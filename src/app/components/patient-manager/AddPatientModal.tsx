@@ -2,6 +2,7 @@
 import { Download, Trash2, Upload, X } from 'lucide-react'
 import React, { useRef, useState } from 'react'
 import Toaster from "../Toaster";
+import { useRouter } from 'next/navigation';
 
 
 const categoriesList = [
@@ -53,6 +54,7 @@ const AddPatientModal=()=> {
       const handleClick = () => {
         fileInputRef.current?.click();
       };
+      const router=useRouter()
     
       const handleUploadAll = async () => {
         const uploadPromises = selectedFiles.map((file) =>
@@ -200,6 +202,7 @@ const AddPatientModal=()=> {
               message: "Patient successfully added",
               variant: "success",
             });
+            router.refresh();
           }
         } catch (error: unknown) {
           console.error("error while adding patinets", error);
