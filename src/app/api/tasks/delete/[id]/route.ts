@@ -2,7 +2,7 @@ import dbConnect from "@/app/lib/db";
 import Task from "@/app/models/Task";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(
+export async function DELETE( 
   req: NextRequest,
   context: { params: Promise<{ id: string }> } // ✅ Correct type
 ) {
