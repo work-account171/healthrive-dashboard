@@ -10,6 +10,8 @@ const UserSchema = new Schema(
       enum: ["super-admin", "admin", "virtual-assistant", "front-desk","billing-team","pharmacy-team"],
     },
     permissions: { type: [String], default: [] },
+    resetPasswordToken:{type:String},
+    resetPasswordExpires:{type:Date}
   },
   { timestamps: true }
 );

@@ -1,16 +1,51 @@
 "use client";
 import logo from "@/../public/logo.svg";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Toaster from "@/app/components/Toaster";
+import { Loader2Icon } from "lucide-react";
 
 function ForgetPassword() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [loading,setLoading]=useState(false)
+  const [toast,setToast]=useState<{
+    message:string,
+    variant:"success"|"error"|"warning";
+  }|null>(null)
+
+  async function handleForgetPassword(e:React.FormEvent<HTMLFormElement>){
+    e.preventDefault();
+    try {
+      const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/forget-password`,{
+        method:"POST",
+        headers:{"Content-type":"application/json"},
+        body:JSON.stringify({email}),
+        credentials:"include"
+      })
+      const data=await res.json();
+      if (res.ok){
+        setLoading(true)
+        setToast({message:data.message,variant:"success"})
+      }
+      else{
+        console.log("failed to fetch data")
+        setToast({message:data.message,variant:"error"})
+      }
+    } catch (error) {
+      setToast({message:"Network error, please try again!",variant:"error"})
+    }finally{
+      setLoading(false)
+    }
+      
+    
+  }
 
   return (
     <section className="flex justify-cente h-screen items-center bg-[url('/login-bg.svg')] bg-center bg-cover">
+      {toast && <Toaster message={toast.message} variant={toast.variant} onClose={()=>setToast(null)}/>}
       <div className="flex flex-col justify-center items-center w-2/3 mx-auto">
         <div className="flex flex-col justify-center items-center gap-10">
           <Image src={logo} alt="logo" width="224" height="61" />
@@ -24,6 +59,7 @@ function ForgetPassword() {
           </div>
           <form
             className="bg-white border-xl flex flex-col gap-6 w-full border border-[#d8dae5] rounded-xl shadow-lg p-4 max-w-[560px]"
+            onSubmit={(e)=>handleForgetPassword(e)}
           >
             <div className="flex flex-col gap-2 justify-center items-start w-full">
               <label htmlFor="email" className="text-black">
@@ -50,7 +86,13 @@ function ForgetPassword() {
               type="submit"
               className="w-full bg-primary py-4 px-5 rounded-xl text-white text-[16px] hover:bg-transparent hover:text-primary border-primary border"
             >
-              Send Reset Link
+              {loading?
+              <>
+              <Loader2Icon className="animate-spin"/>
+              &quot;Sending email&quot;:
+              </>:"Send Reset Link"
+              
+            }
             </button>
           </form>
         </div>

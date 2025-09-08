@@ -39,7 +39,7 @@ const UserRolesAccess = () => {
           status="Active"
           role={user.role}
           permissions={[
-            'Full access to all settings and data',
+            'Full access to all settings  and data',
             'Manage users and permissions',
             'Access all tools and integrations',
           ]}
