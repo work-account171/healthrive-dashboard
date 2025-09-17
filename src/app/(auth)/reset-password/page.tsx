@@ -279,7 +279,75 @@ function ResetPassword() {
             className="bg-white border-xl flex flex-col gap-6 w-full border border-[#d8dae5] rounded-xl shadow-lg p-4 max-w-[560px]"
             onSubmit={handleResetPassword}
           >
-            {/* ... rest of the form remains the same */}
+            <div className="flex flex-col gap-2 justify-center items-start w-full">
+              <label htmlFor="password" className="text-black">
+                New Password
+              </label>
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter new password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  name="password"
+                  className="px-5 w-full placeholder:text-[rgba(3,6,7,0.6)] text-black py-2.5 rounded-xl border border-[#d8dae5]"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-3 text-gray-500"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 justify-center items-start w-full">
+              <label htmlFor="confirmPassword" className="text-black">
+                Confirm Password
+              </label>
+              <div className="relative w-full">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  name="confirmPassword"
+                  className="px-5 w-full placeholder:text-[rgba(3,6,7,0.6)] text-black py-2.5 rounded-xl border border-[#d8dae5]"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-3 text-gray-500"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-primary py-4 px-5 rounded-xl text-white text-[16px] hover:bg-transparent hover:text-primary border-primary border disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <Loader2Icon className="animate-spin inline mr-2" />
+                  Resetting Password...
+                </>
+              ) : (
+                "Reset Password"
+              )}
+            </button>
+            
+            <Link
+              href="/login"
+              className="text-sm text-primary text-center hover:underline"
+            >
+              Back to Login
+            </Link>
           </form>
         </div>
       </div>
