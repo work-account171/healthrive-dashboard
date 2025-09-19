@@ -333,7 +333,7 @@ const Linktool = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2.5 items-center">
+        <div className="flex flex-wrap justify-between gap-y-4 items-center">
           {filteredTools.length > 0 ? (
             filteredTools.map((tool, index) => (
               <ToolCard

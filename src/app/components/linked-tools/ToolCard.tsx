@@ -24,7 +24,7 @@ const ToolCard = ({
   };
 
   return (
-    <div className="flex flex-col gap-[24px] border border-gray-200 rounded-xl px-[24px] pt-[24px] pb-[40px] w-[33%] max-w-[380px] relative bg-white min-h-[223px]  hover:shadow-md">
+    <div className="flex flex-col gap-[24px] border border-gray-200 rounded-xl px-[24px] pt-[24px] pb-[40px] lg:w-[33%] md:w-[47%] relative min-h-[223px]  hover:shadow-md">
       {/* Header row */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex flex-row items-center gap-[14px]">

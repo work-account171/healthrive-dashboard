@@ -456,15 +456,7 @@ function DisplayPatient() {
                   </td>
                   <td className="pl-6 py-4 ">
                     <div className="flex gap-3 items-center  justify-center">
-                      <button
-                        onClick={() => handleDeleteClick(patient)}
-                        className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer"
-                      >
-                        <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
-                          Mark as done
-                        </span>
-                        <Check />
-                      </button>
+                     
 
                       <button
                         onClick={() => {

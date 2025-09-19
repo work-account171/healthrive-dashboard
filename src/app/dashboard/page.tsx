@@ -122,7 +122,7 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col gap-5 justify-start items-start">
           <h1 className="text-2xl font-bold">Quick Access Tools</h1>
-            <div className="flex flex-wrap justify-start itmes-start gap-5">
+            <div className="flex flex-wrap justify-between itmes-start gap-y-4">
               
               {tools.map((tool,index)=>{
                 return(
