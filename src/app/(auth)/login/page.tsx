@@ -4,7 +4,7 @@
 import logo from "@/../public/logo.svg";
 import Image from "next/image";
 import { useState } from "react";
-import { Eye, EyeOff, Loader2 } from "lucide-react"; // Added Loader2
+import { Eye, EyeOff, Loader2 } from "lucide-react"; 
 import Link from "next/link";
 import Toaster from "@/app/components/Toaster";
 import { useRouter } from "next/navigation";

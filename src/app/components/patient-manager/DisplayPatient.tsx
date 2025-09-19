@@ -12,12 +12,15 @@ import {
   RefreshCwIcon,
   Search,
   SlidersHorizontalIcon,
+  Trash,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import AddPatientModal from "./AddPatientModal";
 import Toaster from "../Toaster";
 import TableShimmer from "../task-manager/TableShimmer";
+import ConfirmationModal from "../confirmModal";
+import { tr } from "date-fns/locale";
 
 type Attachment = {
   id: string;
@@ -31,12 +34,10 @@ type Attachment = {
 type Patient = {
   _id: string;
   name: string;
-  desc: string;
-  dueDate: Date;
-  carePhase: string;
-  services: string[];
-  categories: string[];
-  assignee: string;
+  description: string;
+  phNumber:string;
+  email:string;
+  carePhase:string;
   priority: "emergency" | "safe";
   updatedAt: Date;
   attachments: Attachment[];
@@ -59,6 +60,22 @@ function DisplayPatient() {
     variant: "success" | "error" | "warning";
   } | null>(null);
 
+    const [modalConfig, setModalConfig] = useState<{
+      isOpen: boolean;
+      title: string;
+      message: string;
+      onConfirm: () => void;
+      confirmText?: string;
+      confirmColor?: "primary" | "danger" | "success";
+    }>({
+      isOpen: false,
+      title: "",
+      message: "",
+      onConfirm: () => {},
+      confirmText: "Yes",
+      confirmColor: "primary",
+    });
+
   const addPatientModal = async () => {
     if (modal === true) {
       setModal(false);
@@ -76,32 +93,6 @@ function DisplayPatient() {
         : false;
 
       if (!titleMatch && !patientNameMatch) return false;
-    }
-    if (dueDateFilter !== "All Dates") {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const patientDueDate = new Date(patient.dueDate);
-      patientDueDate.setHours(0, 0, 0, 0);
-
-      if (dueDateFilter === "Due Today") {
-        if (patientDueDate.getTime() !== today.getTime()) return false;
-      } else if (dueDateFilter === "Due This Week") {
-        // Get start of week (Monday)
-        const startOfWeek = new Date(today);
-        const day = today.getDay();
-        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-        startOfWeek.setDate(diff);
-        startOfWeek.setHours(0, 0, 0, 0);
-
-        // Get end of week (Sunday)
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
-
-        if (patientDueDate < startOfWeek || patientDueDate > endOfWeek)
-          return false;
-      }
     }
     if (priorityFilter !== "All Priorities") {
       if (priorityFilter === "emergency" && patient.priority !== "emergency")
@@ -135,17 +126,57 @@ function DisplayPatient() {
     }
   }
 
-  function confirmDelete() {
+  function confirmDelete(patient:Patient) {
     if (selectedPatient) {
-      setSidebar(false);
+      console.log(selectedPatient)
+      setModalConfig({
+        isOpen:true,
+        title:"Delete",
+        message:"Are you sure you want to delete the patient?, This action can't be undone",
+        onConfirm:()=>deletePatient(patient._id),
+        confirmText:"yes, Delete",
+        confirmColor:"danger"
+
+      })
+
     }
     setShowModal(false);
     setSelectedPatient(null);
   }
-
+  async function deletePatient(id:string){
+    try {
+      const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/delete-patient/${id}`,{
+        method:"DELETE"
+      })
+      if(res.ok){
+        setToast({message:"patient deleted successfully",variant:"success"})
+        setSidebar(false);
+        closeModal();
+        fetchPatients();
+            }
+    } catch (error) {
+      setToast({message:"failed to delete patient",variant:"error"})
+      console.log(error)
+    }
+      
+      
+  }
   function cancelDelete() {
     setShowModal(false);
     setSelectedPatient(null);
+  }
+  function closeModal() {
+    setModalConfig((prev) => ({ ...prev, isOpen: false }));
+  }
+  function handleDelete(patient:Patient){
+    setModalConfig({
+      isOpen: true,
+      title: "Delete Task",
+      message: `Are you sure you want to delete '${patient.name}'? This action cannot be undone.`,
+      onConfirm: () => deletePatient(patient._id),
+      confirmText: "Yes, Delete",
+      confirmColor: "danger",
+    });
   }
 
   return (
@@ -190,73 +221,38 @@ function DisplayPatient() {
               {selectedPatient?.priority == "emergency" ? "emergency" : "safe"}
             </p>
           </div>
-          <p className="text-gray-600 text-[16px]">{selectedPatient?.desc}</p>
+          <p className="text-gray-600 text-[16px]">{selectedPatient?.description}</p>
           <button
-            onClick={confirmDelete}
-            className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2 5"
+            onClick={()=>selectedPatient && handleDelete(selectedPatient)}
+            className="cursor-pointer bg-red-600 px-4 py-2 rounded-xl w-fit text-white flex gap-2 5"
           >
-            <CheckCheckIcon />
-            Mark as Done
+            <Trash/>
+            Delete Patient
           </button>
         </div>
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 text-primary w-full">
-          <h1 className="text-black text-xl">Task Information</h1>
+          <h1 className="text-black text-xl">Patient Information</h1>
           <div className="flex flex-col gap-1">
             <h1 className="text-[16px] ">
-              Assigned to: {""}
-              <span className="underline">{selectedPatient?.assignee}</span>
+              email: {""}
+              <a href={`mailto:${selectedPatient?.email}`} className="underline">{selectedPatient?.email}</a>
             </h1>
             <h1 className="text-[16px]">
-              Deadline: {""}
+              contact no: {""}
               <span className="font-semibold text-red-500">
-                {selectedPatient && (
-                  <div>
-                    {new Date(selectedPatient.dueDate).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )}
-                  </div>
-                )}
+                    {selectedPatient?.phNumber}
               </span>
             </h1>
           </div>
         </div>
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
           <h1 className="text-black text-xl">Other Information</h1>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-[16px] ">Task Categories: {""}</h1>
-            <div className="flex justify-start itmes-start gap-2">
-              {selectedPatient?.categories.map((category) => {
-                return (
-                  <div
-                    key={category}
-                    className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
-                  >
-                    {category}
-                  </div>
-                );
-              })}
+           <div className="text-[16px]">
+              Patient's description: {""}
+              <span className="font-semibold">
+                    {selectedPatient?.description}
+              </span>
             </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-[16px] ">Linked services: {""}</h1>
-            <div className="flex justify-start itmes-start gap-2">
-              {selectedPatient?.services.map((service) => {
-                return (
-                  <div
-                    key={service}
-                    className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
-                  >
-                    {service}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </div>
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
           <h1 className="text-black text-xl">Attachments</h1>
@@ -336,16 +332,7 @@ function DisplayPatient() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <select
-            value={dueDateFilter}
-            onChange={(e) => setDueDateFilter(e.target.value)}
-            className="py-3 px-4 border border-gray-200 text-[16px] bg-white rounded-xl w-40"
-          >
-            <option value="All Dates">All Dates</option>
-            <option value="Due Today">Due Today</option>
-            <option value="Due This Week">Due This Week</option>
-          </select>
-
+         
           {/* Priority Filter */}
           <select
             value={priorityFilter}
@@ -415,8 +402,8 @@ function DisplayPatient() {
             <tr>
               <th className="px-6 py-5">Patient Name</th>
               <th className="px-6 py-5">Care Phase</th>
-              <th className="px-6 py-5">Due Date</th>
-              <th className="px-6 py-5">Assignee</th>
+              <th className="px-6 py-5">Ph. Number</th>
+              <th className="px-6 py-5">Email</th>
               <th className="px-6 py-5">
                 <div className="flex items-center gap-2">
                   Status
@@ -447,13 +434,9 @@ function DisplayPatient() {
                   <td className="px-6 py-4">{patient.name}</td>
                   <td className="px-6 py-4">{patient.carePhase}</td>
                   <td className="px-6 py-4">
-                    {new Date(patient.dueDate).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {patient.phNumber}
                   </td>
-                  <td className="px-6 py-4">{patient.assignee}</td>
+                  <td className="px-6 py-4">{patient.email}</td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-2.5 rounded-xl font-medium ${
@@ -511,7 +494,7 @@ function DisplayPatient() {
           </p>
           <div className="flex gap-2 w-full mt-4">
             <button
-              onClick={confirmDelete}
+              onClick={()=>confirmDelete}
               className="bg-primary w-full text-white hover:bg-red-500 px-4 py-2 rounded-lg cursor-pointer"
             >
               Yes
@@ -525,6 +508,15 @@ function DisplayPatient() {
           </div>
         </div>
       )}
+       <ConfirmationModal
+        isOpen={modalConfig.isOpen}
+        onClose={closeModal}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        confirmColor={modalConfig.confirmColor}
+      />
     </>
   );
 }

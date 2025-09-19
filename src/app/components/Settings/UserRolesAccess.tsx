@@ -27,7 +27,6 @@ const UserRolesAccess = () => {
   return (
     <div className="p-[20px] w-full">
       <h2 className="text-xl font-medium mb-4">User Roles & Access Control</h2>
-
      
       {users.map((user,index)=>{
         return(

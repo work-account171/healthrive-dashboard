@@ -7,7 +7,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> } // ✅ Correct type
 ) {
   try {
-    await dbConnect();
+    await dbConnect(); 
     const params = await context.params; // ✅ Await the Promise
     const { id } = params;
     

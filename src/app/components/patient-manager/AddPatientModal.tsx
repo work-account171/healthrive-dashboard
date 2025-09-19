@@ -26,13 +26,10 @@ const AddPatientModal=()=> {
       const [name, setName] = useState("");
       const [carePhase,setCarePhase]=useState("")
       const [patientDesc, setPatientDesc] = useState("");
-      const [selected, setSelected] = useState<string[]>([]);
-      const [services, setServices] = useState<string[]>([]);
-      const [selectedAssignee, setSelectedAssignee] = useState("");
-      const [dueDate, setDueDate] = useState("");
       const [priority, setPriority] = useState("");
-      const [recurrance, setRecurrence] = useState("");
       const [loading, setLoading] = useState(false);
+      const [email,setEmail]=useState("");
+      const [phNumber,setphNumber]=useState("")
       const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
       const [uploadStatus, setUploadStatus] = useState<
         Record<
@@ -146,27 +143,10 @@ const AddPatientModal=()=> {
         }
       };
     
-      const toggleServices = (services: string) => {
-        setServices((prev) =>
-          prev.includes(services)
-            ? prev.filter((s) => s != services)
-            : [...prev, services]
-        );
-      };
-      const removeServices = (services: string) => {
-        setServices((prev) => prev.filter((s) => s !== services));
-      };
-      const toggleCategory = (category: string) => {
-        setSelected((prev) =>
-          prev.includes(category)
-            ? prev.filter((c) => c != category)
-            : [...prev, category]
-        );
-      };
-      const removeCategory = (category: string) => {
-        setSelected((prev) => prev.filter((c) => c !== category));
-      };
-    
+      
+      
+     
+     
       
       const addPatient = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -176,12 +156,9 @@ const AddPatientModal=()=> {
           name:name,
           description: patientDesc,
           carePhase,
-          categories: selected,
-          assignee: selectedAssignee,
-          dueDate,
-          services,
+          email,
+          phNumber,
           priority,
-          recurrence: recurrance,
           attachments: uploadedFiles, // Include uploaded files
         };
         try {
@@ -229,7 +206,7 @@ const AddPatientModal=()=> {
         />
       )}
      <div
-        className={`modal z-20 bg-white rounded-xl left-1/2 transform -translate-x-1/2 overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
+        className={`modal z-20 bg-white rounded-xl left-1/2 transform -translate-x-1/2  overflow-y-scroll scrollbar-none  border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
           !modal ? "absolute top-2" : "hidden"
         }`}
       >
@@ -288,98 +265,40 @@ const AddPatientModal=()=> {
               onChange={(e) => setPatientDesc(e.target.value)}
             />
           </div>
-
-          <div className="flex w-full flex-col justify-start items-start gap-1.5">
-            <div>
-              <label className="font-semibold block mb-2">
-                Categories <span className="text-red-500">*</span>
-              </label>
-
-              <div className="flex flex-wrap gap-2">
-                {selected.map((category) => (
-                  <span
-                    key={category}
-                    className="flex items-center gap-2 px-3 py-1 bg-gray-200 rounded-full"
-                  >
-                    {category}
-                    <button
-                      type="button"
-                      onClick={() => removeCategory(category)}
-                      className="text-gray-600 hover:text-red-600"
-                    >
-                      <X size={14} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-
-              {/* Options */}
-              <div className="flex flex-wrap gap-2 mt-3">
-                {categoriesList
-                  .filter((c) => !selected.includes(c))
-                  .map((category) => (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => toggleCategory(category)}
-                      className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100"
-                    >
-                      {category}
-                    </button>
-                  ))}
-              </div>
-
+         <div className="w-full gap-5 flex justify-center items-center">
+           <div className="flex w-full flex-col justify-start items-start gap-1.5">
+              <label htmlFor="email">email</label>
               <input
-                type="hidden"
-                name="categories"
-                required
-                value={JSON.stringify(selected)}
+                type="text"
+                name="email"
+                value={email}
+                className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
+                placeholder="Enter patient's email if any"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-          </div>
-          <div className="w-full gap-5 flex justify-center items-center">
-            <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="assignee">
-                Assign to <span className="text-red-500 font-semibold">*</span>
-              </label>
-              <select
-                name="assignee"
-                id="assignee"
-                value={selectedAssignee}
-                onChange={(e) => setSelectedAssignee(e.target.value)}
-                className="py-4 px-5 w-full bg-gray-100 text-gray-600 rounded-xl"
-                required
-              >
-                <option value="" disabled>
-                  Select Assignee
-                </option>
-                <option value="Virtual Assistant">Virtual Assistant</option>
-                <option value="Front Desk">Front Desk</option>
-                <option value="Billing Team">Billing Team</option>
-                <option value="Pharmacy Team">Pharmacy Team</option>
-              </select>
-            </div>
-            <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="dueDate">
-                Due Date
-                <span className="text-red-500 font-semibold">*</span>
-              </label>
-
+            
+           <div className="flex w-full flex-col justify-start items-start gap-1.5">
+              <label htmlFor="phNumber">phNumber</label>
               <input
-                type="date"
-                name="dueDate"
-                id="dueDate"
-                required
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="py-4 px-5 w-full bg-gray-100 text-gray-600 rounded-xl"
-                min={new Date().toISOString().split("T")[0]}
+                type="tel"
+                name="phNumber"
+                value={phNumber}
+                className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
+                placeholder="Enter patient's phone number if any"
+                onChange={(e) => setphNumber(e.target.value)}
               />
             </div>
+            
+            
           </div>
+
+        
+         
+          
           <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="assignee">
+              <label htmlFor="priority">
                 Priority <span className="text-red-500 font-semibold">*</span>
               </label>
               <select
@@ -396,55 +315,9 @@ const AddPatientModal=()=> {
               </select>
             </div>
             
+            
           </div>
-          <div className="flex w-full flex-col justify-start items-start gap-1.5">
-            <div>
-              <label className="font-semibold block mb-2">
-                Linked Services <span className="text-red-500">*</span>
-              </label>
-
-              {/* Selected Services */}
-              <div className="flex flex-wrap gap-2">
-                {services.map((service) => (
-                  <span
-                    key={service}
-                    className="flex items-center gap-2 px-3 py-1 bg-gray-200 rounded-full"
-                  >
-                    {service}
-                    <button
-                      type="button"
-                      onClick={() => removeServices(service)}
-                      className="text-gray-600 hover:text-red-600"
-                    >
-                      <X size={14} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-
-              {/* Options to Add */}
-              <div className="flex flex-wrap gap-2 mt-3">
-                {linkedServices
-                  .filter((s) => !services.includes(s))
-                  .map((service) => (
-                    <button
-                      key={service}
-                      type="button"
-                      onClick={() => toggleServices(service)}
-                      className="px-3 py-1 rounded-full border border-gray-300 hover:bg-gray-100"
-                    >
-                      {service}
-                    </button>
-                  ))}
-              </div>
-
-              <input
-                type="hidden"
-                name="services"
-                value={JSON.stringify(services)}
-              />
-            </div>
-          </div>
+        
          
           <div className="flex flex-col w-full gap-2">
             <label htmlFor="attachments" className="font-semibold text-sm">
