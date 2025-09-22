@@ -46,8 +46,8 @@ export async function POST(req: Request) {
 
     const response = NextResponse.json(
       { 
-        message: "Login successful",
-        user: { // Return non-sensitive user data if needed
+        message: `${user.name}Login successfuly!`,
+        user: { 
           id: user._id,
           name: user.name,
           email: user.email,

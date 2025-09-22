@@ -1,7 +1,5 @@
 "use client";
 import {
-  Check,
-  CheckCheckIcon,
   Download,
   Eye,
   File,
