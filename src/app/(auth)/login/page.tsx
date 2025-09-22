@@ -8,6 +8,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Toaster from "@/app/components/Toaster";
 import { useRouter } from "next/navigation";
+import { authAPI } from "@/app/lib/authAPI";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -33,7 +34,9 @@ function Login() {
       });
 
       if (res.ok) {
-        router.push("/dashboard"); 
+        // router.push("/dashboard"); 
+        await authAPI.login({ email, password })
+      router.push('/dashboard')
       } else {
         const data = await res.json();
         setToast({ message: data.message, variant: "error" });

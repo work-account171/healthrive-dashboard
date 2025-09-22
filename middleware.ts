@@ -1,27 +1,20 @@
-// middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
-
-  // No token → redirect to login
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get('token')?.value
+  
+  if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
-
-  try {
-    jwt.verify(token, process.env.JWT_SECRET!);
-    // Token is valid → allow request
-    return NextResponse.next();
-  } catch {
-    // Invalid token → redirect to login
-    return NextResponse.redirect(new URL("/login", req.url));
+  
+  if (token && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
+  
+  return NextResponse.next()
 }
 
-// Apply to specific routes only
 export const config = {
-  matcher: ["/dashboard/:path*"], // Protect /dashboard and all subpages
-};
+  matcher: ['/dashboard/:path*', '/login', '/register']
+}

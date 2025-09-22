@@ -3,6 +3,7 @@ import Sidebars from "../components/Sidebar";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default async function DashboardLayout({
   children,
@@ -23,6 +24,7 @@ export default async function DashboardLayout({
   }
 
   return (
+    <ProtectedRoute>
     <div className="flex flex-col justify-start items-start">
       <Header />
       <div className="flex flex-row w-full pt-20 h-screen">
@@ -30,6 +32,7 @@ export default async function DashboardLayout({
         <main className="flex-1 px-6 pt-6">{children}</main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 
