@@ -4,7 +4,6 @@ import { FC, useEffect, useRef, useState } from 'react';
 import logo from "@/../public/logo.svg";
 import { AlertCircle, Bell, BellRing, CheckCheck, CheckCircle, Info, LogOut, User, X } from 'lucide-react';
 import { useAppStore } from '../stores/useAppStore';
-import { authAPI } from '../lib/authAPI';
 
 
 const Header: FC = () => {

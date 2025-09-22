@@ -1,3 +1,4 @@
+'use client'
 import { useAppStore } from "../stores/useAppStore";
 
 export const authAPI = {
@@ -9,7 +10,6 @@ export const authAPI = {
         body: JSON.stringify(credentials),
         credentials: 'include' // Important for cookies
       })
-      
       if (!res.ok) {
         const errorData = await res.json()
         throw new Error(errorData.message || 'Login failed')
@@ -22,7 +22,7 @@ export const authAPI = {
       
       // Add success notification
       useAppStore.getState().addNotification({
-        message: 'Login successful!',
+        message: `Login successful! Welcome Back!`,
         type: 'success'
       })
       
