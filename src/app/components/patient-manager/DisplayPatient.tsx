@@ -248,7 +248,7 @@ function DisplayPatient() {
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
           <h1 className="text-black text-xl">Other Information</h1>
            <div className="text-[16px]">
-              Patient's description: {""}
+              Patient&apos;s description: {""}
               <span className="font-semibold">
                     {selectedPatient?.description}
               </span>

@@ -9,6 +9,7 @@ import LinkIcon from "@/../public/icons/link.svg"
 import Image from "next/image"
 import { LogOutIcon } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
+import { authAPI } from "../lib/authAPI"
 function Sidebars() {
   const pathname=usePathname();
   const router=useRouter()
@@ -24,10 +25,7 @@ function Sidebars() {
   ]
   const handleLogout=async()=>{
     try {
-      await fetch("/api/auth/logout",{
-        method:"POST",
-        credentials:"include"
-      })
+      await authAPI.logout()
       router.push("/login")
     } catch (error) {
       console.error("logout failed"+error)
