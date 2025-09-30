@@ -3,7 +3,6 @@ import {
   Check,
   CheckCheckIcon,
   Download,
-  Edit,
   Eye,
   File,
   FileText,
@@ -19,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import Toaster from "../Toaster";
 import TableShimmer from "./TableShimmer";
 import AddTaskModal from "./AddTaskModal";
+
 type Attachment = {
   id: string;
   name: string;
@@ -43,6 +43,9 @@ type Task = {
 };
 
 export default function DisplayTask() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 7;
+
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,16 +61,7 @@ export default function DisplayTask() {
   } | null>(null);
   const [modal, setModal] = useState(false);
 
-  const addTaskModal = async () => {
-    if (modal === true) {
-      setModal(false);
-      fetchTasks();
-    } else {
-      setModal(true);
-      fetchTasks(); 
-    }
-  };
-
+  // fetch tasks
   async function fetchTasks() {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
@@ -77,55 +71,60 @@ export default function DisplayTask() {
     setLoading(false);
     console.log(data);
   }
-  const filteredTasks = tasks.filter((task) => {
-     if (searchQuery.trim()) {
-    const query = searchQuery.toLowerCase();
-    const titleMatch = task.title.toLowerCase().includes(query);
-    const patientNameMatch = task.patientName 
-      ? task.patientName.toLowerCase().includes(query)
-      : false;
-    
-    if (!titleMatch && !patientNameMatch) return false;
-  }
 
-  
-  
-  // Due date filter (independent - shows only tasks matching the selected date filter)
-  if (dueDateFilter !== "All Dates") {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const taskDueDate = new Date(task.dueDate);
-    taskDueDate.setHours(0, 0, 0, 0);
-    
-    if (dueDateFilter === "Due Today") {
-      if (taskDueDate.getTime() !== today.getTime()) return false;
-    } 
-    else if (dueDateFilter === "Due This Week") {
-      // Get start of week (Monday)
-      const startOfWeek = new Date(today);
-      const day = today.getDay();
-      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-      startOfWeek.setDate(diff);
-      startOfWeek.setHours(0, 0, 0, 0);
-      
-      // Get end of week (Sunday)
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
-      endOfWeek.setHours(23, 59, 59, 999);
-      
-      if (taskDueDate < startOfWeek || taskDueDate > endOfWeek) return false;
+  // filters
+  const filteredTasks = tasks.filter((task) => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const titleMatch = task.title.toLowerCase().includes(query);
+      const patientNameMatch = task.patientName
+        ? task.patientName.toLowerCase().includes(query)
+        : false;
+
+      if (!titleMatch && !patientNameMatch) return false;
     }
-  }
-  
-  // Priority filter (independent - shows only tasks matching the selected priority)
-  if (priorityFilter !== "All Priorities") {
-    if (priorityFilter === "Urgent" && task.priority !== "high") return false;
-    if (priorityFilter === "Normal" && task.priority !== "normal") return false;
-  }
-  
-  return true;
+
+    // Due date filter
+    if (dueDateFilter !== "All Dates") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const taskDueDate = new Date(task.dueDate);
+      taskDueDate.setHours(0, 0, 0, 0);
+
+      if (dueDateFilter === "Due Today") {
+        if (taskDueDate.getTime() !== today.getTime()) return false;
+      } else if (dueDateFilter === "Due This Week") {
+        const startOfWeek = new Date(today);
+        const day = today.getDay();
+        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+        startOfWeek.setDate(diff);
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        endOfWeek.setHours(23, 59, 59, 999);
+
+        if (taskDueDate < startOfWeek || taskDueDate > endOfWeek) return false;
+      }
+    }
+
+    // Priority filter
+    if (priorityFilter !== "All Priorities") {
+      if (priorityFilter === "Urgent" && task.priority !== "high")
+        return false;
+      if (priorityFilter === "Normal" && task.priority !== "normal")
+        return false;
+    }
+
+    return true;
   });
+
+  // pagination
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
 
   useEffect(() => {
     fetchTasks();
@@ -146,20 +145,16 @@ export default function DisplayTask() {
       });
     }
   }
+
   function handleDeleteClick(task: Task) {
     setSelectedTask(task);
-    if (showModal === false) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
+    setShowModal(!showModal);
   }
 
   function confirmDelete() {
     if (selectedTask) {
       taskDone(selectedTask._id);
       setSidebar(false);
-
     }
     setShowModal(false);
     setSelectedTask(null);
@@ -170,6 +165,15 @@ export default function DisplayTask() {
     setSelectedTask(null);
   }
 
+  const addTaskModal = async () => {
+    if (modal) {
+      setModal(false);
+      fetchTasks();
+    } else {
+      setModal(true);
+      fetchTasks();
+    }
+  };
   return (
     <>
       {modal ? <AddTaskModal /> : ""}
@@ -236,50 +240,49 @@ export default function DisplayTask() {
           {(dueDateFilter !== "All Dates" ||
             priorityFilter !== "All Priorities" ||
             searchQuery) && (
-            <button
-              onClick={() => {
-                setDueDateFilter("All Dates");
-                setPriorityFilter("All Priorities");
-                setSearchQuery("");
-              }}
-              className="py-2 px-4 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-xl"
-            >
-              Clear Filters
-            </button>
-          )}
+              <button
+                onClick={() => {
+                  setDueDateFilter("All Dates");
+                  setPriorityFilter("All Priorities");
+                  setSearchQuery("");
+                }}
+                className="py-2 px-4 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-xl"
+              >
+                Clear Filters
+              </button>
+            )}
         </div>
       </div>
       {(dueDateFilter !== "All Dates" ||
         priorityFilter !== "All Priorities" ||
         searchQuery) && (
-        <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
-          <p className="text-sm font-medium text-blue-800 mb-2">
-            Active Filters:
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {dueDateFilter !== "All Dates" && (
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                {dueDateFilter} 📅
-              </span>
-            )}
-            {priorityFilter !== "All Priorities" && (
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                {priorityFilter} {priorityFilter === "Urgent" ? "⚠️" : "✅"}
-              </span>
-            )}
-            {searchQuery && (
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                Search: &quot;{searchQuery}&quot;🔍
-              </span>
-            )}
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+            <p className="text-sm font-medium text-blue-800 mb-2">
+              Active Filters:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {dueDateFilter !== "All Dates" && (
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                  {dueDateFilter} 📅
+                </span>
+              )}
+              {priorityFilter !== "All Priorities" && (
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                  {priorityFilter} {priorityFilter === "Urgent" ? "⚠️" : "✅"}
+                </span>
+              )}
+              {searchQuery && (
+                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                  Search: &quot;{searchQuery}&quot;🔍
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
       {/* sidebar after clicking view starts from here */}
       <div
-        className={`sidebar ${
-          sidebar ? "translate-x-0" : "translate-x-full"
-        } fixed transition-transform duration-300 ease-in-out w-1/3 z-10 p-8 flex flex-col gap-6 border border-primary bg-white h-screen top-0 right-0`}
+        className={`sidebar ${sidebar ? "translate-x-0" : "translate-x-full"
+          } fixed transition-transform duration-300 ease-in-out w-1/3 z-10 p-8 flex flex-col gap-6 border border-primary bg-white h-screen top-0 right-0`}
       >
         <button
           onClick={() => {
@@ -297,11 +300,10 @@ export default function DisplayTask() {
               Active
             </p>
             <p
-              className={` rounded-xl ${
-                selectedTask?.priority == "high"
+              className={` rounded-xl ${selectedTask?.priority == "high"
                   ? "bg-red-600"
                   : "bg-yellow-300"
-              } text-white  px-2.5 py-1.5`}
+                } text-white  px-2.5 py-1.5`}
             >
               {selectedTask?.priority == "high" ? "Urgent" : "Normal"}
             </p>
@@ -310,7 +312,7 @@ export default function DisplayTask() {
             {selectedTask?.description}
           </p>
           <button onClick={confirmDelete} className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2 5">
-            <CheckCheckIcon/>
+            <CheckCheckIcon />
             Mark as Done
           </button>
         </div>
@@ -377,7 +379,7 @@ export default function DisplayTask() {
           <h1 className="text-black text-xl">Attachments</h1>
           <div className="flex flex-col gap-3">
             {selectedTask?.attachments &&
-            selectedTask.attachments.length > 0 ? (
+              selectedTask.attachments.length > 0 ? (
               selectedTask.attachments.map((attachment) => (
                 <div
                   key={attachment.id}
@@ -432,7 +434,7 @@ export default function DisplayTask() {
           </span>
         </div>
         <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
-          <thead className="bg-gray-100 rounded-xl text-black font-medium  text-[16px]">
+          <thead className="bg-gray-100 rounded-xl text-black font-medium text-[16px]">
             <tr>
               <th className="px-6 py-5">Task</th>
               <th className="px-6 py-5">Patient</th>
@@ -442,10 +444,7 @@ export default function DisplayTask() {
                 <div className="flex items-center gap-2">
                   Status
                   <div className="relative group">
-                    {/* Lucide Info Icon */}
                     <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
-
-                    {/* Tooltip on hover */}
                     <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-white text-sm text-primary rounded-md shadow-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-5 whitespace-nowrap">
                       Urgent tasks have higher priority
                     </div>
@@ -459,66 +458,104 @@ export default function DisplayTask() {
           {loading ? (
             <TableShimmer />
           ) : (
-            <tbody className="bg-white divide-y divide-gray-100">
-              {filteredTasks.map((task, index) => (
-                <tr
-                  key={index}
-                  className="hover:bg-gray-50 text-[16px] transition duration-150"
-                >
-                  <td className="px-6 py-4">{task.title}</td>
-                  <td className="px-6 py-4">{task.patientName}</td>
-                  <td className="px-6 py-4">
-                    {new Date(task.dueDate).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </td>
-                  <td className="px-6 py-4">{task.assignee}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-2.5 rounded-xl font-medium ${
-                        task.priority === "high"
-                          ? "bg-red-600 text-white"
-                          : task.priority === "normal"
-                          ? "bg-yellow-400 text-white"
-                          : "bg-blue-100 text-blue-700"
-                      }`}
-                    >
-                      {`${task.priority === "high" ? "Urgent" : "Normal"}`}
-                    </span>
-                  </td>
-                  <td className="pl-6 py-4 ">
-                    <div className="flex gap-3 items-center justify-center">
-                      <button
-                        onClick={() => handleDeleteClick(task)}
-                        className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer"
+            <>
+              <tbody className="bg-white divide-y divide-gray-100">
+                {currentTasks.map((task, index) => (
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-50 text-[16px] transition duration-150"
+                  >
+                    <td className="px-6 py-4">{task.title}</td>
+                    <td className="px-6 py-4">{task.patientName}</td>
+                    <td className="px-6 py-4">
+                      {new Date(task.dueDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </td>
+                    <td className="px-6 py-4">{task.assignee}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-2 py-2.5 rounded-xl font-medium ${task.priority === "high"
+                            ? "bg-red-600 text-white"
+                            : task.priority === "normal"
+                              ? "bg-yellow-400 text-white"
+                              : "bg-blue-100 text-blue-700"
+                          }`}
                       >
-                        <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
-                          Mark as done
-                        </span>
-                        <Check />
+                        {`${task.priority === "high" ? "Urgent" : "Normal"}`}
+                      </span>
+                    </td>
+                    <td className="pl-6 py-4">
+                      <div className="flex gap-3 items-center justify-center">
+                        <button
+                          onClick={() => handleDeleteClick(task)}
+                          className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer"
+                        >
+                          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
+                            Mark as done
+                          </span>
+                          <Check />
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setSidebar(true);
+                            setSelectedTask(task);
+                          }}
+                          className="bg-primary rounded-lg text-white p-2 group relative"
+                        >
+                          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
+                            View
+                          </span>
+                          <Eye />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+              {/* Pagination controls */}
+              <tfoot>
+                <tr>
+                  <td colSpan={6} className="px-6 py-4">
+                    <div className="flex justify-center items-center gap-2">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
+                      >
+                        «
                       </button>
 
+                      {Array.from({ length: totalPages }, (_, i) => (
+                        <button
+                          key={i + 1}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-primary font-bold text-white px-3 py-1" : ""
+                            }`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+
                       <button
-                        onClick={() => {
-                          setSidebar(true);
-                          setSelectedTask(task);
-                        }}
-                        className="bg-primary rounded-lg text-white p-2 group relative"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
                       >
-                        <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
-                          View
-                        </span>
-                        <Eye />
+                        »
                       </button>
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
+              </tfoot>
+            </>
           )}
         </table>
+
       </div>
 
 

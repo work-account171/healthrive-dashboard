@@ -1,6 +1,6 @@
 "use client";
 import { Download, Trash2, Upload, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRef } from "react";
 import Toaster from "../Toaster";
 
@@ -20,8 +20,17 @@ export interface UploadedFile {
   url: string;
   uploadedAt: string;
 }
+
+interface Patient {
+  _id: string;
+  name: string;
+}
 const linkedServices = ["Healthie", "Spruce", "CoverMyMeds", "Google Calender"];
 function AddTaskModal() {
+
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const [title, setTitle] = useState("");
   const [modal, setModal] = useState(false);
   const [patientName, setPatientName] = useState("");
@@ -44,6 +53,25 @@ function AddTaskModal() {
       }
     >
   >({});
+
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
+  async function fetchPatients() {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/get-patients`
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setPatients(data);
+      }
+    } catch (err) {
+      console.error("Error fetching patients:", err);
+    }
+  }
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null); // ✅ Typed correctly
@@ -215,6 +243,7 @@ function AddTaskModal() {
       setLoading(false);
     }
   };
+
   return (
     <>
       {toast && (
@@ -225,9 +254,8 @@ function AddTaskModal() {
         />
       )}
       <div
-        className={`modal z-20 bg-white rounded-xl left-1/2 transform -translate-x-1/2 overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
-          !modal ? "absolute top-2" : "hidden"
-        }`}
+        className={`modal z-20 bg-white rounded-xl left-1/2 transform -translate-x-1/2 overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${!modal ? "absolute top-2" : "hidden"
+          }`}
       >
         <X
           className="absolute top-3 right-3 border rounded-full p-1 cursor-pointer font-bold hover:text-red-500"
@@ -258,8 +286,8 @@ function AddTaskModal() {
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
-            <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="title">Patient Name (optional)</label>
+            {/* <div className="flex w-full flex-col justify-start items-start gap-1.5">
+              <label htmlFor="title">Select Patient</label>
               <input
                 type="text"
                 name="title"
@@ -268,7 +296,46 @@ function AddTaskModal() {
                 placeholder="Enter patient name ..."
                 onChange={(e) => setPatientName(e.target.value)}
               />
+            </div> */}
+
+            <div className="flex w-full flex-col justify-start items-start gap-1.5 relative ">
+              <label htmlFor="title">Select Patient</label>
+              <input
+                type="text"
+                name="title"
+                value={patientName}
+                className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
+                placeholder="Enter patient name ..."
+                onChange={(e) => {
+                  setPatientName(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
+              />
+
+              {showDropdown &&  (
+                <ul className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl mt-1 max-h-60 overflow-y-auto shadow-lg z-10">
+                  {patients
+                    .filter((p) =>
+                      p.name.toLowerCase().includes(patientName.toLowerCase())
+                    )
+                    .map((p) => (
+                      <li
+                        key={p._id}
+                        className="px-5 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          setPatientName(p.name);
+                          setShowDropdown(false);
+                        }}
+                      >
+                        {p.name}
+                      </li>
+                    ))}
+                </ul>
+              )}
             </div>
+
+
           </div>
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
             <label htmlFor="title">
@@ -350,8 +417,8 @@ function AddTaskModal() {
                 </option>
                 <option value="Virtual Assistant">Virtual Assistant</option>
                 <option value="Front Desk">Front Desk</option>
-                <option value="Billing Team">Billing Team</option>
-                <option value="Pharmacy Team">Pharmacy Team</option>
+                {/* <option value="Billing Team">Billing Team</option>
+                <option value="Pharmacy Team">Pharmacy Team</option> */}
               </select>
             </div>
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
@@ -542,13 +609,12 @@ function AddTaskModal() {
                         </span>
                         {uploadStatus[file.name] && (
                           <span
-                            className={`ml-3 text-xs ${
-                              uploadStatus[file.name].status === "success"
+                            className={`ml-3 text-xs ${uploadStatus[file.name].status === "success"
                                 ? "text-green-600"
                                 : uploadStatus[file.name].status === "error"
-                                ? "text-red-600"
-                                : "text-blue-600"
-                            }`}
+                                  ? "text-red-600"
+                                  : "text-blue-600"
+                              }`}
                           >
                             {uploadStatus[file.name].message} ;please first
                             click upload files button below before adding tasks
