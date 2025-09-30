@@ -118,7 +118,7 @@ const Header: FC = () => {
               <div className="flex flex-col items-center justify-center p-8 text-gray-500">
                 <Bell className="w-12 h-12 text-gray-300 mb-2" />
                 <p className="text-sm">No notifications yet</p>
-                <p className="text-xs">We'll notify you when something arrives</p>
+                <p className="text-xs">We&apos;ll notify you when something arrives</p>
               </div>
             ) : (
               <>
