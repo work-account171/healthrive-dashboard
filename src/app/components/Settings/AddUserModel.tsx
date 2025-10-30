@@ -5,17 +5,18 @@ import Image from "next/image";
 
 import tick from "@/../public/icons/tick-mark.svg";
 import fulla from "@/../public/icons/full-access.svg";
-
 import adminIcon from "@/../public/icons/admin-icon.svg";
-import { User } from "lucide-react";
+import { User, Loader2 } from "lucide-react"; // 👈 Loader2 icon for spinner
 import Toaster from "../Toaster";
 
 export default function AddUserModal({
   isOpen,
   onClose,
+  onUserAdded, // 👈 new prop
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onUserAdded: () => void; // 👈 new prop type
 }) {
   const [sendInvite, setSendInvite] = useState(true);
   const [name, setName] = useState("");
@@ -31,6 +32,7 @@ export default function AddUserModal({
     icon: adminIcon,
   });
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 👈 loading state
 
   const roles = [
     { label: "Admin", value: "admin", icon: adminIcon },
@@ -42,17 +44,16 @@ export default function AddUserModal({
 
   if (!isOpen) return null;
 
-  async function createUser(e: React.FormEvent<HTMLFormElement>) {
+    async function createUser(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setIsLoading(true);
 
     const newUser = {
-      name: name,
-      email: email,
-      password: password,
+      name,
+      email,
+      password,
       role: selectedRole.value,
     };
-
-    console.log(newUser);
 
     try {
       const res = await fetch(
@@ -65,33 +66,40 @@ export default function AddUserModal({
       );
 
       const data = await res.json();
-      console.log("Saved user:", data);
 
       if (res.ok) {
-        console.log("User created successfully!");
-        onClose();
         setToast({
-          message:"user created successfully",
-          variant:"success"
-        })
-        // Optional: Show toast, redirect, etc.
+          message: "User created successfully",
+          variant: "success",
+        });
+        onClose();
+        onUserAdded(); // 👈 refresh users after adding
       } else {
-        console.log("Failed to create user:", data);
+        setToast({
+          message: data.message || "Failed to create user",
+          variant: "error",
+        });
       }
     } catch (error) {
       console.error("Error creating user:", error);
+      setToast({
+        message: "Something went wrong",
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
     }
   }
-
   return (
     <>
-    {toast&&(<Toaster
-    message={toast.message}
-    variant={toast.variant}
-    onClose={() => setToast(null)}
-
-    />)}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      {toast && (
+        <Toaster
+          message={toast.message}
+          variant={toast.variant}
+          onClose={() => setToast(null)}
+        />
+      )}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 overflow-y-scroll">
         <div className="bg-white rounded-2xl w-full max-w-lg p-6 relative">
           {/* Close Button */}
           <button
@@ -108,7 +116,7 @@ export default function AddUserModal({
             Create a new user account and assign their role in the system.
           </p>
 
-          <form className="space-y-4" onSubmit={(e) => createUser(e)}>
+          <form className="space-y-4" onSubmit={createUser}>
             <div>
               <label className="text-sm font-medium block mb-1">
                 Full Name *
@@ -122,7 +130,7 @@ export default function AddUserModal({
                 className="w-full px-4 py-2.5 bg-gray-100 rounded-md outline-none text-sm"
               />
             </div>
-            {/* Email */}
+
             <div>
               <label className="text-sm font-medium block mb-1">
                 Email Address *
@@ -136,6 +144,7 @@ export default function AddUserModal({
                 className="w-full px-4 py-2.5 bg-gray-100 rounded-md outline-none text-sm"
               />
             </div>
+
             <div>
               <label className="text-sm font-medium block mb-1">
                 Password *
@@ -150,7 +159,7 @@ export default function AddUserModal({
               />
             </div>
 
-            {/* Custom Role Dropdown */}
+            {/* Role Dropdown */}
             <div className="relative">
               <label className="text-sm font-medium block mb-1">Role *</label>
               <div
@@ -159,7 +168,6 @@ export default function AddUserModal({
               >
                 <div className="flex items-center gap-2">
                   <User width={17} height={17} />
-
                   <span>{selectedRole.label}</span>
                 </div>
                 <svg
@@ -249,15 +257,24 @@ export default function AddUserModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-[24px] py-[16px] rounded-lg border text-sm text-primary border-primary hover:bg-gray-100"
+                disabled={isLoading}
+                className="px-[24px] py-[16px] rounded-lg border text-sm text-primary border-primary hover:bg-gray-100 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-[24px] py-[16px] rounded-lg bg-primary text-white text-sm"
+                disabled={isLoading}
+                className="px-[24px] py-[16px] rounded-lg bg-primary text-white text-sm flex items-center justify-center gap-2 disabled:opacity-70"
               >
-                Add User
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  "Add User"
+                )}
               </button>
             </div>
           </form>
