@@ -174,6 +174,7 @@ import icon8 from "@/../public/icons/Icon8.svg";
 import icon9 from "@/../public/icons/Icon9.svg";
 import icon10 from "@/../public/icons/Icon10.svg";
 import icon11 from "@/../public/icons/Icon11.svg";
+import { link } from "fs";
 
 const Linktool = () => {
   const tabs = [
@@ -193,72 +194,85 @@ const Linktool = () => {
       title: "Healthie",
       subheading: "EMR & Patient Scheduling",
       tags: ["Clinical", "HIPAA", "Critical", "EMR", "Scheduling"],
+      link:"https://secure.gethealthie.com/users/sign_in"
     },
     {
       icon: icon2,
       title: "Spruce",
       subheading: "Patient Communication & Fax",
       tags: ["Communication", "HIPAA", "Critical", "Fax"],
+      link:"https://app.sprucehealth.com/login"
     },
     {
       icon: icon3,
       title: "Stripe",
       subheading: "Payment Processing & Billing",
       tags: ["Administrative", "Critical", "Billing", "Payment"],
+      link:"https://dashboard.stripe.com/login"
     },
     {
       icon: icon4,
       title: "Google Calendar",
       subheading: "Appointment Scheduling",
       tags: ["Clinical", "Critical", "Calendar", "Scheduling"],
+      link:"https://calendar.google.com/calendar/u/0/r"
+
     },
     {
       icon: icon5,
       title: "CoverMyMeds",
       subheading: "Prior Authorization Management",
       tags: ["Clinical", "HIPAA", "Critical", "Prior Auth", "Insurance"],
+      link:""
     },
     {
       icon: icon6,
       title: "Gmail/Enguard",
       subheading: "HIPAA-Compliant Email",
       tags: ["Clinical", "HIPAA", "Critical", "Email"],
+      link:"https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox"
     },
     {
       icon: icon7,
       title: "Google Drive",
       subheading: "Cloud Storage",
       tags: ["Storage", "Files"],
+      link:"https://drive.google.com/drive/home"
     },
     {
       icon: icon8,
       title: "Dropbox",
       subheading: "Cloud Storage",
       tags: ["Storage", "Files"],
+      link:"https://drive.google.com/drive/home"
     },
     {
       icon: icon9,
       title: "Free.ai",
       subheading: "AI Note Transcription",
       tags: ["AI", "HIPAA", "Critical", "Transcription"],
+      link:""
     },
     {
       icon: icon10,
       title: "Google Forms",
       subheading: "Patient Surveys & Forms",
       tags: ["Administrative", "Surveys", "Forms"],
+      link:""
     },
     {
       icon: icon11,
       title: "Constant Contact",
       subheading: "Email Marketing Campaigns",
       tags: ["Communication", "Marketing", "Email"],
+      link:""
     },
     {
       icon: icon1,
       title: "Trello",
       subheading: "Legacy Task Management",
       tags: ["Legacy", "Tasks"],
+      link:"https://trello.com/"
     },
   ];
 
@@ -342,6 +356,7 @@ const Linktool = () => {
                 title={tool.title}
                 subheading={tool.subheading}
                 tags={tool.tags}
+                link={tool.link}
               />
             ))
           ) : (

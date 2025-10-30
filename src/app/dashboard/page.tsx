@@ -14,39 +14,45 @@ import icon6 from "@/../public/icons/Icon6.svg";
 const tools = [
     {
       icon: "/icons/Icon.svg",
+      title: "My Website",
+      subheading: "healthrivemedical.com",
+      tags: ["Healthrive website link"],
+      link:"https://www.healthrivemedical.com/"
+    },
+    {
+      icon: "/icons/Icon.svg",
       title: "Healthie",
       subheading: "EMR & Patient Scheduling",
       tags: ["Clinical", "HIPAA", "Critical", "EMR", "Scheduling"],
+      link:"https://secure.gethealthie.com/users/sign_in"
     },
     {
       icon: icon2,
       title: "Spruce",
       subheading: "Patient Communication & Fax",
       tags: ["Communication", "HIPAA", "Critical", "Fax"],
+      link:"https://app.sprucehealth.com/login"
     },
     {
       icon: icon3,
       title: "Stripe",
       subheading: "Payment Processing & Billing",
       tags: ["Administrative", "Critical", "Billing", "Payment"],
+      link:"https://dashboard.stripe.com/login"
     },
     {
       icon: icon4,
       title: "Google Calendar",
       subheading: "Appointment Scheduling",
       tags: ["Clinical", "Critical", "Calendar", "Scheduling"],
-    },
-    {
-      icon: icon5,
-      title: "CoverMyMeds",
-      subheading: "Prior Authorization Management",
-      tags: ["Clinical", "HIPAA", "Critical", "Prior Auth", "Insurance"],
+      link:"https://calendar.google.com/calendar/u/0/r"
     },
     {
       icon: icon6,
       title: "Gmail/Enguard",
       subheading: "HIPAA-Compliant Email",
       tags: ["Clinical", "HIPAA", "Critical", "Email"],
+      link:"https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox"
     },
   ]
 
@@ -132,6 +138,7 @@ export default function Dashboard() {
                               title={tool.title}
                               subheading={tool.subheading}
                               tags={tool.tags}
+                              link={tool.link}
                             />
                 )
               })

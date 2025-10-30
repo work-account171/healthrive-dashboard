@@ -8,6 +8,7 @@ type ToolCardProps = {
   subheading: string;
   tags?: string[];
   criticalTags?: string[];
+  link:string,
 };
 
 const ToolCard = ({
@@ -16,6 +17,7 @@ const ToolCard = ({
   subheading,
   tags = [],
   criticalTags = [],
+  link,
 }: ToolCardProps) => {
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
@@ -24,7 +26,7 @@ const ToolCard = ({
   };
 
   return (
-    <div className="flex flex-col gap-[24px] border border-gray-200 rounded-xl px-[24px] pt-[24px] pb-[40px] lg:w-[33%] md:w-[47%] relative min-h-[223px]  hover:shadow-md">
+    <a href={link} target="_blank" className="flex flex-col cursor-pointer gap-[24px] border border-gray-200 rounded-xl px-[24px] pt-[24px] pb-[40px] lg:w-[33%] md:w-[47%] relative min-h-[223px]  hover:shadow-md">
       {/* Header row */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex flex-row items-center gap-[14px]">
@@ -59,7 +61,7 @@ const ToolCard = ({
             const isActive = activeTag === tag;
 
             const baseClasses =
-              "px-3 py-1 rounded-lg text-xs font-medium border cursor-pointer transition";
+              "px-3 py-1 rounded-lg text-xs font-medium border cursor-pointer transition h-fit";
 
       
             let tagClasses = baseClasses;
@@ -76,7 +78,6 @@ const ToolCard = ({
             return (
               <span
                 key={idx}
-                onClick={() => handleTagClick(tag)}
                 className={tagClasses}
               >
                 {tag}
@@ -85,7 +86,7 @@ const ToolCard = ({
           })}
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 
