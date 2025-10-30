@@ -11,7 +11,7 @@ export interface IAttachment {
 export interface IPatient extends Document{
     id:string,
     name:string,
-    clientId:String,
+    clientId:string,
     firstName:string,
     lastName:string,
     description:string,
