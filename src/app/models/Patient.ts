@@ -11,7 +11,9 @@ export interface IAttachment {
 export interface IPatient extends Document{
     id:string,
     name:string,
-    carePhase:string,
+    clientId:String,
+    firstName:string,
+    lastName:string,
     description:string,
     email:string,
     phNumber:string,
@@ -33,9 +35,11 @@ const AttachmentSchema: Schema = new Schema({
 
 const PatientSchema:Schema=new Schema(
     {
-        name:{type:String,required:true},
+        firstName:{type:String},
+        lastName:{type:String},
+        clientId:{type:String},
+        name:{type:String},
         description:{type:String},
-        carePhase:{type:String},
         email:{type:String},
         phNumber:{type:String},
         priority:{

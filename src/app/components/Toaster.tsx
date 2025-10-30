@@ -36,7 +36,7 @@ const Toaster: React.FC<ToasterProps> = ({ message, variant = "success", onClose
 
   return (
     <div
-      className={`fixed top-4 right-5 flex items-center gap-3 px-5 py-4 rounded-xl shadow-lg border transition-all duration-500 transform translate-x-0 opacity-100 animate-slide-in ${styles.bg}`}
+      className={`fixed top-4 right-5 flex items-center gap-3 px-5 py-4 rounded-xl shadow-lg border transition-all z-50 duration-500 transform translate-x-0 opacity-100 animate-slide-in ${styles.bg}`}
     >
       {styles.icon}
       <h1 className="text-black">{message}</h1>

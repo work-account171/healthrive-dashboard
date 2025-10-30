@@ -23,10 +23,12 @@ export interface UploadedFile {
 }
 const linkedServices = ["Healthie", "Spruce", "CoverMyMeds", "Google Calender"];
 const AddPatientModal=()=> {
-      const [name, setName] = useState("");
-      const [carePhase,setCarePhase]=useState("")
+      const [name,setName]=useState("")
+      const [firstName, setfirstName] = useState("");
+      const [lastName, setlastName] = useState("");
+      const [clientId, setclientId] = useState("");
       const [patientDesc, setPatientDesc] = useState("");
-      const [priority, setPriority] = useState("");
+      const [priority, setPriority] = useState("safe");
       const [loading, setLoading] = useState(false);
       const [email,setEmail]=useState("");
       const [phNumber,setphNumber]=useState("")
@@ -153,14 +155,17 @@ const AddPatientModal=()=> {
         setLoading(true);
     
         const newPatient = {
-          name:name,
+          clientId,
+          name,
+          firstName,
+          lastName,
           description: patientDesc,
-          carePhase,
           email,
           phNumber,
           priority,
           attachments: uploadedFiles, // Include uploaded files
         };
+        console.log(newPatient)
         try {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/add-patient`,
@@ -176,7 +181,7 @@ const AddPatientModal=()=> {
           if (res.ok && data.success) {
             setModal(true);
             setToast({
-              message: "Patient successfully added",
+              message: "Patient successfully added press refresh icon",
               variant: "success",
             });
             router.refresh();
@@ -227,39 +232,67 @@ const AddPatientModal=()=> {
           <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
               <label htmlFor="name">
-                Patient Name 
+                clientID 
               </label>
               <input
                 type="text"
                 name="name"
-                required
+                value={clientId}
+                className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
+                placeholder="Enter Patient Name"
+                onChange={(e) => setclientId(e.target.value)}
+              />
+            </div>
+            <div className="flex w-full flex-col justify-start items-start gap-1.5">
+              <label htmlFor="name">
+                Full Name 
+              </label>
+              <input
+                type="text"
+                name="name"
                 value={name}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
                 placeholder="Enter Patient Name"
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
+            
+          </div>
+          <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="carePhase">Care Phase <span className="text-red-500 font-semibold">*</span></label>
+              <label htmlFor="firstName">
+                First Name 
+              </label>
               <input
                 type="text"
-                name="carePhase"
+                name="firstName"
+                value={firstName}
+                className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
+                placeholder="Enter Patient Name"
+                onChange={(e) => setfirstName(e.target.value)}
+              />
+            </div>
+            <div className="flex w-full flex-col justify-start items-start gap-1.5">
+              <label htmlFor="lastName">Last Name </label>
+              <input
+                type="text"
+                name="lastName"
                 required
-                value={carePhase}
+                value={lastName}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
                 placeholder="Enter Care Phase i.e  ongoing, new care, stable"
-                onChange={(e) => setCarePhase(e.target.value)}
+                onChange={(e) => setlastName(e.target.value)}
               />
             </div>
           </div>
+          
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
             <label htmlFor="patientDesc">
-              Description <span className="text-red-500 font-semibold">*</span>
+              Description 
             </label>
             <textarea
               name="patientDesc"
               value={patientDesc}
-              required
               className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
               placeholder="Enter patient description..."
               onChange={(e) => setPatientDesc(e.target.value)}
@@ -269,7 +302,7 @@ const AddPatientModal=()=> {
            <div className="flex w-full flex-col justify-start items-start gap-1.5">
               <label htmlFor="email">email</label>
               <input
-                type="text"
+                type="email"
                 name="email"
                 value={email}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
@@ -299,7 +332,7 @@ const AddPatientModal=()=> {
           <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
               <label htmlFor="priority">
-                Priority <span className="text-red-500 font-semibold">*</span>
+                Priority 
               </label>
               <select
                 name="priority"
@@ -307,9 +340,7 @@ const AddPatientModal=()=> {
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
                 className="py-4 px-5 w-full bg-gray-100 text-gray-600 rounded-xl"
-                required
               >
-                <option value="">Select Priority</option>
                 <option value="safe">Normal</option>
                 <option value="emergency">Emergency</option>
               </select>

@@ -32,6 +32,8 @@ type Attachment = {
 type Patient = {
   _id: string;
   name: string;
+  firstName:string,
+  lastName:string,
   description: string;
   phNumber:string;
   email:string;
@@ -395,12 +397,12 @@ function DisplayPatient() {
             Refresh
           </span>
         </div>
-        <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
+        <table className="min-w-full  text-sm text-left border border-gray-300 rounded-3xl">
           <thead className="bg-gray-100 rounded-xl text-black font-medium  text-[16px]">
             <tr>
-              <th className="px-6 py-5">Patient Name</th>
-              <th className="px-6 py-5">Care Phase</th>
-              <th className="px-6 py-5">Ph. Number</th>
+              <th className="px-6 py-5">ClientId</th>
+              <th className="px-6 py-5">First Name</th>
+              <th className="px-6 py-5">Last Name</th>
               <th className="px-6 py-5">Email</th>
               <th className="px-6 py-5">
                 <div className="flex items-center gap-2">
@@ -430,9 +432,9 @@ function DisplayPatient() {
                   className="hover:bg-gray-50 text-[16px] transition duration-150"
                 >
                   <td className="px-6 py-4">{patient.name}</td>
-                  <td className="px-6 py-4">{patient.carePhase}</td>
+                  <td className="px-6 py-4">{patient.firstName}</td>
                   <td className="px-6 py-4">
-                    {patient.phNumber}
+                    {patient.lastName}
                   </td>
                   <td className="px-6 py-4">{patient.email}</td>
                   <td className="px-6 py-4">
