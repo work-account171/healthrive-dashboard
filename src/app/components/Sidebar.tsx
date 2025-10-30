@@ -20,7 +20,7 @@ function Sidebars() {
     { href: "/dashboard/task-manager", label: "Task Manager", icon: taskIcon },
     { href: "/dashboard/patient-manager", label: "Patient Management", icon: patientIcon },
     { href: "/dashboard/linked-tools", label: "Linked Tools", icon: LinkIcon },
-    { href: "/dashboard/calendar", label: "Calendar", icon: calendarIcon },
+    { href: "/dashboard/calender", label: "Calendar", icon: calendarIcon },
     { href: "/dashboard/settings", label: "Settings", icon: settingIcon },
   ];
 

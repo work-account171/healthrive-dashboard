@@ -74,7 +74,7 @@ const Header: FC = () => {
   };
 
   return (
-    <nav className="flex fixed items-center justify-between w-full px-6 py-6 shadow-sm bg-white z-50">
+    <nav className="flex fixed items-center justify-between w-full px-6 py-6 shadow-sm bg-white z-10">
       <Image src={logo} alt="Healthrive Logo" width={200} height={40} />
 
       <div className="flex items-center justify-center gap-4">

@@ -1,49 +1,3 @@
-// 'use client'
-// import React, { useEffect, useState } from 'react'
-
-// type Task = {
-//   _id: string;
-//   title: string;
-//   patientName: string;
-//   description: string;
-//   dueDate: Date;
-//   services: string[];
-//   categories: string[];
-//   assignee: string;
-//   priority: "high" | "normal";
-//   updatedAt: Date;
-// };
-
-// function Calender() {
-//   const [tasks,setTasks]=useState<Task[]>([])
-//   const [loading,setLoading]=useState(true)
-
-//   async function fetchTasks(){
-//     const res = await fetch(
-//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
-//     );
-//     const data=await res.json();
-//     setTasks(data)
-//     console.log(data)
-//     setLoading(false);
-//   }
-//  useEffect(()=>{
-//     fetchTasks();
-//  },[])
-//   return (
-//     <div>{tasks.map((task,index)=>{
-//       return(
-//         <div key={index}>{task.title}</div>
-//       )
-//     })}</div>
-//   )
-// }
-
-// export default Calender
-
-
-
-
 'use client'
 import React, { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight, Circle, AlertCircle, Calendar as CalendarIcon } from 'lucide-react'
@@ -67,14 +21,22 @@ function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
 
+  // async function fetchTasks() {
+  //   const res = await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
+  //   );
+  //   const data = await res.json();
+  //   setTasks(data)
+  //   setLoading(false);
+  // }
   async function fetchTasks() {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
-    );
-    const data = await res.json();
-    setTasks(data)
-    setLoading(false);
-  }
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false&limit=0`
+  );
+  const data = await res.json();
+  setTasks(data.tasks)
+  setLoading(false);
+}
 
   useEffect(() => {
     fetchTasks();
