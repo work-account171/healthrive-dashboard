@@ -45,15 +45,13 @@ type Task = {
 export default function DisplayTask() {
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 7;
-
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dueDateFilter, setDueDateFilter] = useState<string>("All Dates");
-  const [priorityFilter, setPriorityFilter] =
-    useState<string>("All Priorities");
+  const [priorityFilter, setPriorityFilter] = useState<string>("All Priorities");
   const [sidebar, setSidebar] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
@@ -61,18 +59,29 @@ export default function DisplayTask() {
   } | null>(null);
   const [modal, setModal] = useState(false);
 
-  // fetch tasks
+  // Fetch tasks
   async function fetchTasks() {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
-    );
-    const data = await res.json();
-    setTasks(data);
-    setLoading(false);
-    console.log(data);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/get-tasks?completed=false`
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch tasks");
+      }
+      const data = await res.json();
+      setTasks(data.tasks);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+      setToast({
+        message: "Failed to fetch tasks",
+        variant: "error",
+      });
+      setLoading(false);
+    }
   }
 
-  // filters
+  // Filters
   const filteredTasks = tasks.filter((task) => {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -80,7 +89,6 @@ export default function DisplayTask() {
       const patientNameMatch = task.patientName
         ? task.patientName.toLowerCase().includes(query)
         : false;
-
       if (!titleMatch && !patientNameMatch) return false;
     }
 
@@ -88,7 +96,6 @@ export default function DisplayTask() {
     if (dueDateFilter !== "All Dates") {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
       const taskDueDate = new Date(task.dueDate);
       taskDueDate.setHours(0, 0, 0, 0);
 
@@ -111,16 +118,14 @@ export default function DisplayTask() {
 
     // Priority filter
     if (priorityFilter !== "All Priorities") {
-      if (priorityFilter === "Urgent" && task.priority !== "high")
-        return false;
-      if (priorityFilter === "Normal" && task.priority !== "normal")
-        return false;
+      if (priorityFilter === "Urgent" && task.priority !== "high") return false;
+      if (priorityFilter === "Normal" && task.priority !== "normal") return false;
     }
 
     return true;
   });
 
-  // pagination
+  // Pagination
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
   const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
@@ -130,25 +135,39 @@ export default function DisplayTask() {
     fetchTasks();
   }, []);
 
+  useEffect(() => {
+    console.log("Tasks on current page:", currentTasks);
+  }, [currentTasks]);
+
   async function taskDone(id: string) {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/update/${id}`,
-      {
-        method: "PATCH",
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/tasks/update/${id}`,
+        {
+          method: "PATCH",
+        }
+      );
+      if (res.ok) {
+        setTasks(tasks.filter((task) => task._id !== id));
+        setToast({
+          message: "Task successfully marked as done!",
+          variant: "success",
+        });
+      } else {
+        throw new Error("Failed to mark task as done");
       }
-    );
-    if (res.ok) {
-      setTasks(tasks.filter((task) => task._id !== id));
+    } catch (error) {
+      console.error("Error marking task as done:", error);
       setToast({
-        message: "Task successfully marked as done!",
-        variant: "success",
+        message: "Failed to mark task as done",
+        variant: "error",
       });
     }
   }
 
   function handleDeleteClick(task: Task) {
     setSelectedTask(task);
-    setShowModal(!showModal);
+    setShowModal(true);
   }
 
   function confirmDelete() {
@@ -165,19 +184,14 @@ export default function DisplayTask() {
     setSelectedTask(null);
   }
 
-  const addTaskModal = async () => {
-    if (modal) {
-      setModal(false);
-      fetchTasks();
-    } else {
-      setModal(true);
-      fetchTasks();
-    }
+  const addTaskModal = () => {
+    setModal(!modal);
+    fetchTasks();
   };
+
   return (
     <>
-      {modal ? <AddTaskModal /> : ""}
-
+      {modal && <AddTaskModal />}
       {toast && (
         <Toaster
           message={toast.message}
@@ -194,21 +208,21 @@ export default function DisplayTask() {
         </div>
         <button
           onClick={addTaskModal}
-          className="bg-primary  cursor-pointer hover:bg-white hover:text-primary border border-primary text-white text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
+          className="bg-primary cursor-pointer hover:bg-white hover:text-primary border border-primary text-white text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
         >
           <Plus />
           Add Task
         </button>
       </div>
 
-      {/* filter search bar */}
+      {/* Filter search bar */}
       <div className="rounded-xl py-6 px-5 flex flex-col gap-5 border border-gray-100">
         <div className="flex justify-start text-2xl font-bold items-center gap-3.5">
           <SlidersHorizontal />
           Filters & Controls
         </div>
         <div className="flex justify-start items-start gap-6 w-full">
-          <div className="py-3 px-4 flex justify-start items-center w-full bg-gray-100 gap-2.5 rounded-xl border border-gray-200 ">
+          <div className="py-3 px-4 flex justify-start items-center w-full bg-gray-100 gap-2.5 rounded-xl border border-gray-200">
             <Search />
             <input
               type="text"
@@ -226,12 +240,10 @@ export default function DisplayTask() {
             <option value="Due Today">Due Today</option>
             <option value="Due This Week">Due This Week</option>
           </select>
-
-          {/* Priority Filter */}
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="py-3 px-4  text-[16px] border border-gray-200 text-sm bg-white rounded-xl w-40"
+            className="py-3 px-4 border border-gray-200 text-[16px] bg-white rounded-xl w-40"
           >
             <option value="All Priorities">All Priorities</option>
             <option value="Urgent">Urgent</option>
@@ -240,49 +252,51 @@ export default function DisplayTask() {
           {(dueDateFilter !== "All Dates" ||
             priorityFilter !== "All Priorities" ||
             searchQuery) && (
-              <button
-                onClick={() => {
-                  setDueDateFilter("All Dates");
-                  setPriorityFilter("All Priorities");
-                  setSearchQuery("");
-                }}
-                className="py-2 px-4 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-xl"
-              >
-                Clear Filters
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setDueDateFilter("All Dates");
+                setPriorityFilter("All Priorities");
+                setSearchQuery("");
+                setCurrentPage(1); // Reset to page 1 when clearing filters
+              }}
+              className="py-2 px-4 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-xl"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
+
       {(dueDateFilter !== "All Dates" ||
         priorityFilter !== "All Priorities" ||
         searchQuery) && (
-          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
-            <p className="text-sm font-medium text-blue-800 mb-2">
-              Active Filters:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {dueDateFilter !== "All Dates" && (
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                  {dueDateFilter} 📅
-                </span>
-              )}
-              {priorityFilter !== "All Priorities" && (
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                  {priorityFilter} {priorityFilter === "Urgent" ? "⚠️" : "✅"}
-                </span>
-              )}
-              {searchQuery && (
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-                  Search: &quot;{searchQuery}&quot;🔍
-                </span>
-              )}
-            </div>
+        <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+          <p className="text-sm font-medium text-blue-800 mb-2">Active Filters:</p>
+          <div className="flex flex-wrap gap-2">
+            {dueDateFilter !== "All Dates" && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                {dueDateFilter} 📅
+              </span>
+            )}
+            {priorityFilter !== "All Priorities" && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                {priorityFilter} {priorityFilter === "Urgent" ? "⚠️" : "✅"}
+              </span>
+            )}
+            {searchQuery && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                Search: &quot;{searchQuery}&quot; 🔍
+              </span>
+            )}
           </div>
-        )}
-      {/* sidebar after clicking view starts from here */}
+        </div>
+      )}
+
+      {/* Sidebar */}
       <div
-        className={`sidebar ${sidebar ? "translate-x-0" : "translate-x-full"
-          } fixed transition-transform duration-300 ease-in-out w-1/3 z-10 p-8 flex flex-col gap-6 border border-primary bg-white h-screen top-0 right-0`}
+        className={`sidebar ${
+          sidebar ? "translate-x-0" : "translate-x-full"
+        } fixed transition-transform duration-300 ease-in-out w-1/3 z-10 p-8 flex flex-col gap-6 border border-primary bg-white h-screen top-0 right-0`}
       >
         <button
           onClick={() => {
@@ -300,18 +314,18 @@ export default function DisplayTask() {
               Active
             </p>
             <p
-              className={` rounded-xl ${selectedTask?.priority == "high"
-                  ? "bg-red-600"
-                  : "bg-yellow-300"
-                } text-white  px-2.5 py-1.5`}
+              className={`rounded-xl ${
+                selectedTask?.priority === "high" ? "bg-red-600" : "bg-yellow-300"
+              } text-white px-2.5 py-1.5`}
             >
-              {selectedTask?.priority == "high" ? "Urgent" : "Normal"}
+              {selectedTask?.priority === "high" ? "Urgent" : "Normal"}
             </p>
           </div>
-          <p className="text-gray-600 text-[16px]">
-            {selectedTask?.description}
-          </p>
-          <button onClick={confirmDelete} className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2 5">
+          <p className="text-gray-600 text-[16px]">{selectedTask?.description}</p>
+          <button
+            onClick={confirmDelete}
+            className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2.5"
+          >
             <CheckCheckIcon />
             Mark as Done
           </button>
@@ -319,25 +333,18 @@ export default function DisplayTask() {
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 text-primary w-full">
           <h1 className="text-black text-xl">Task Information</h1>
           <div className="flex flex-col gap-1">
-            <h1 className="text-[16px] ">
-              Assigned to: {""}
-              <span className="underline">{selectedTask?.assignee}</span>
+            <h1 className="text-[16px]">
+              Assigned to: <span className="underline">{selectedTask?.assignee}</span>
             </h1>
             <h1 className="text-[16px]">
-              Deadline: {""}
+              Deadline:{" "}
               <span className="font-semibold text-red-500">
-                {selectedTask && (
-                  <div>
-                    {new Date(selectedTask.dueDate).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )}
-                  </div>
-                )}
+                {selectedTask &&
+                  new Date(selectedTask.dueDate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
               </span>
             </h1>
           </div>
@@ -345,48 +352,42 @@ export default function DisplayTask() {
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
           <h1 className="text-black text-xl">Other Information</h1>
           <div className="flex flex-col gap-1">
-            <h1 className="text-[16px] ">Task Categories: {""}</h1>
-            <div className="flex justify-start itmes-start gap-2">
-              {selectedTask?.categories.map((category) => {
-                return (
-                  <div
-                    key={category}
-                    className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
-                  >
-                    {category}
-                  </div>
-                );
-              })}
+            <h1 className="text-[16px]">Task Categories:</h1>
+            <div className="flex justify-start items-start gap-2">
+              {selectedTask?.categories.map((category) => (
+                <div
+                  key={category}
+                  className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
+                >
+                  {category}
+                </div>
+              ))}
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <h1 className="text-[16px] ">Linked services: {""}</h1>
-            <div className="flex justify-start itmes-start gap-2">
-              {selectedTask?.services.map((service) => {
-                return (
-                  <div
-                    key={service}
-                    className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
-                  >
-                    {service}
-                  </div>
-                );
-              })}
+            <h1 className="text-[16px]">Linked services:</h1>
+            <div className="flex justify-start items-start gap-2">
+              {selectedTask?.services.map((service) => (
+                <div
+                  key={service}
+                  className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
+                >
+                  {service}
+                </div>
+              ))}
             </div>
           </div>
         </div>
         <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
           <h1 className="text-black text-xl">Attachments</h1>
           <div className="flex flex-col gap-3">
-            {selectedTask?.attachments &&
-              selectedTask.attachments.length > 0 ? (
+            {selectedTask?.attachments && selectedTask.attachments.length > 0 ? (
               selectedTask.attachments.map((attachment) => (
                 <div
                   key={attachment.id}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
                 >
                   <div className="flex items-center space-x-3">
-                    {/* File icon based on type */}
                     {attachment.type.includes("pdf") ? (
                       <FileText className="w-5 h-5 text-red-500" />
                     ) : attachment.type.includes("image") ? (
@@ -414,22 +415,20 @@ export default function DisplayTask() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">
-                No files attached to this task
-              </p>
+              <p className="text-gray-500 text-sm">No files attached to this task</p>
             )}
           </div>
         </div>
       </div>
 
-      {/* display tasks-table starts from here  */}
-      <div className="rounded-xl relative">
+      {/* Display tasks table */}
+      <div className="rounded-xl relative pr-14">
         <div
-          className="absolute top-5 right-5 z-5 text-black group"
+          className="absolute top-5 right-5 z-10 text-black group"
           onClick={() => fetchTasks()}
         >
           <RefreshCwIcon />
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
             Refresh
           </span>
         </div>
@@ -445,7 +444,7 @@ export default function DisplayTask() {
                   Status
                   <div className="relative group">
                     <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
-                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-white text-sm text-primary rounded-md shadow-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-5 whitespace-nowrap">
+                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-white text-sm text-primary rounded-md shadow-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 whitespace-nowrap">
                       Urgent tasks have higher priority
                     </div>
                   </div>
@@ -454,70 +453,73 @@ export default function DisplayTask() {
               <th className="pl-28 py-5">Action</th>
             </tr>
           </thead>
-
           {loading ? (
             <TableShimmer />
           ) : (
             <>
               <tbody className="bg-white divide-y divide-gray-100">
-                {currentTasks.map((task, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-gray-50 text-[16px] transition duration-150"
-                  >
-                    <td className="px-6 py-4">{task.title}</td>
-                    <td className="px-6 py-4">{task.patientName}</td>
-                    <td className="px-6 py-4">
-                      {new Date(task.dueDate).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </td>
-                    <td className="px-6 py-4">{task.assignee}</td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-2 py-2.5 rounded-xl font-medium ${task.priority === "high"
-                            ? "bg-red-600 text-white"
-                            : task.priority === "normal"
-                              ? "bg-yellow-400 text-white"
-                              : "bg-blue-100 text-blue-700"
-                          }`}
-                      >
-                        {`${task.priority === "high" ? "Urgent" : "Normal"}`}
-                      </span>
-                    </td>
-                    <td className="pl-6 py-4">
-                      <div className="flex gap-3 items-center justify-center">
-                        <button
-                          onClick={() => handleDeleteClick(task)}
-                          className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer"
-                        >
-                          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
-                            Mark as done
-                          </span>
-                          <Check />
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setSidebar(true);
-                            setSelectedTask(task);
-                          }}
-                          className="bg-primary rounded-lg text-white p-2 group relative"
-                        >
-                          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
-                            View
-                          </span>
-                          <Eye />
-                        </button>
-                      </div>
+                {currentTasks.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                      No tasks found
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  currentTasks.map((task, index) => (
+                    <tr
+                      key={task._id}
+                      className="hover:bg-gray-50 text-[16px] transition duration-150"
+                    >
+                      <td className="px-6 py-4">{task.title}</td>
+                      <td className="px-6 py-4">{task.patientName}</td>
+                      <td className="px-6 py-4">
+                        {new Date(task.dueDate).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="px-6 py-4">{task.assignee}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-2 py-2.5 rounded-xl font-medium ${
+                            task.priority === "high"
+                              ? "bg-red-600 text-white"
+                              : "bg-yellow-400 text-white"
+                          }`}
+                        >
+                          {task.priority === "high" ? "Urgent" : "Normal"}
+                        </span>
+                      </td>
+                      <td className="pl-6 py-4">
+                        <div className="flex gap-3 items-center justify-center">
+                          <button
+                            onClick={() => handleDeleteClick(task)}
+                            className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer"
+                          >
+                            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
+                              Mark as done
+                            </span>
+                            <Check />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSidebar(true);
+                              setSelectedTask(task);
+                            }}
+                            className="bg-primary rounded-lg text-white p-2 group relative"
+                          >
+                            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
+                              View
+                            </span>
+                            <Eye />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
-
-              {/* Pagination controls */}
               <tfoot>
                 <tr>
                   <td colSpan={6} className="px-6 py-4">
@@ -529,18 +531,17 @@ export default function DisplayTask() {
                       >
                         «
                       </button>
-
                       {Array.from({ length: totalPages }, (_, i) => (
                         <button
                           key={i + 1}
                           onClick={() => setCurrentPage(i + 1)}
-                          className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-primary font-bold text-white px-3 py-1" : ""
-                            }`}
+                          className={`px-3 py-1 border rounded ${
+                            currentPage === i + 1 ? "bg-primary font-bold text-white" : ""
+                          }`}
                         >
                           {i + 1}
                         </button>
                       ))}
-
                       <button
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage(currentPage + 1)}
@@ -555,16 +556,13 @@ export default function DisplayTask() {
             </>
           )}
         </table>
-
       </div>
 
-
-      {/* modal on clicking tak mark as done */}
+      {/* Modal for marking task as done */}
       {showModal && (
-        <div className="absolute top-10 right-10 z-50  border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
+        <div className="absolute top-10 right-10 z-50 border transition-all duration-500 ease-out opacity-100 translate-y-0 border-primary bg-white p-3 rounded-xl shadow-md">
           <p>
-            Are you sure you want to mark this &apos;{selectedTask?.title}
-            &apos; task done?
+            Are you sure you want to mark this &apos;{selectedTask?.title}&apos; task done?
           </p>
           <div className="flex gap-2 w-full mt-4">
             <button

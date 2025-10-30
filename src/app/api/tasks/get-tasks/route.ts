@@ -1,18 +1,13 @@
-
-
 import dbConnect from "@/app/lib/db";
 import Task from "@/app/models/Task";
 import { NextResponse } from "next/server";
+import { FilterQuery } from "mongoose";
 
-
-
-
-
-export interface ITask extends Document {
+export interface ITask {
   title: string;
   description: string;
   patientName: string;
-  completed:boolean;
+  completed: boolean;
   categories: string[];
   assignee: string;
   dueDate: Date;
@@ -22,25 +17,45 @@ export interface ITask extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
-import { FilterQuery } from 'mongoose';
 
 export async function GET(req: Request) {
   await dbConnect();
-  
+
   const { searchParams } = new URL(req.url);
-  const completed = searchParams.get('completed');
-  
+  const completed = searchParams.get("completed");
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "0");
+
   try {
-    const filter: FilterQuery<ITask> = {}; 
-    
-    // Add completion filter if provided
+    const filter: FilterQuery<ITask> = {};
+
     if (completed !== null) {
-      filter.completed = completed === 'true';
+      filter.completed = completed === "true";
     }
-    
-    const tasks = await Task.find(filter).sort({ createdAt: -1 });
-    return NextResponse.json(tasks);
-  } catch (err: unknown) {
-    return NextResponse.json({ error: err }, { status: 500 });
+
+    const total = await Task.countDocuments(filter);
+    let query = Task.find(filter).sort({ createdAt: -1 }).lean();
+
+    if (limit > 0) {
+      query = query.skip((page - 1) * limit).limit(limit);
+    }
+
+    const tasks = await query;
+
+    // Map priority to match frontend's Task type
+    const mappedTasks = tasks.map((task) => ({
+      ...task,
+      priority: task.priority === "low" || task.priority === "medium" ? "normal" : task.priority,
+    }));
+
+    return NextResponse.json({
+      tasks: mappedTasks,
+      currentPage: page,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
+      total,
+    });
+  } catch (err) {
+    console.error("Error fetching tasks:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
