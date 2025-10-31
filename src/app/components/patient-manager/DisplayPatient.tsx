@@ -32,8 +32,8 @@ type Attachment = {
 type Patient = {
   _id: string;
   name: string;
-  firstName:string,
-  lastName:string,
+  firstName:string;
+  lastName:string;
   description: string;
   phNumber:string;
   email:string;
@@ -60,21 +60,25 @@ function DisplayPatient() {
     variant: "success" | "error" | "warning";
   } | null>(null);
 
-    const [modalConfig, setModalConfig] = useState<{
-      isOpen: boolean;
-      title: string;
-      message: string;
-      onConfirm: () => void;
-      confirmText?: string;
-      confirmColor?: "primary" | "danger" | "success";
-    }>({
-      isOpen: false,
-      title: "",
-      message: "",
-      onConfirm: () => {},
-      confirmText: "Yes",
-      confirmColor: "primary",
-    });
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const patientsPerPage = 7;
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    confirmText?: string;
+    confirmColor?: "primary" | "danger" | "success";
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => {},
+    confirmText: "Yes",
+    confirmColor: "primary",
+  });
 
   const addPatientModal = async () => {
     if (modal === true) {
@@ -83,6 +87,8 @@ function DisplayPatient() {
       setModal(true);
     }
   };
+
+  // Filters
   const filteredPatients = patient.filter((patient) => {
     if (searchQuery.trim()) {
       console.log("patietns are: " + patient);
@@ -103,6 +109,13 @@ function DisplayPatient() {
 
     return true;
   });
+
+  // Pagination
+  const indexOfLastPatient = currentPage * patientsPerPage;
+  const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+  const currentPatients = filteredPatients.slice(indexOfFirstPatient, indexOfLastPatient);
+  const totalPages = Math.ceil(filteredPatients.length / patientsPerPage);
+
   async function fetchPatients() {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/get-patients`
@@ -114,9 +127,11 @@ function DisplayPatient() {
       setLoading(false);
     }
   }
+
   useEffect(() => {
     fetchPatients();
   }, []);
+
   function handleDeleteClick(patient: Patient) {
     setSelectedPatient(patient);
     if (showModal === false) {
@@ -136,13 +151,12 @@ function DisplayPatient() {
         onConfirm:()=>deletePatient(patient._id),
         confirmText:"yes, Delete",
         confirmColor:"danger"
-
       })
-
     }
     setShowModal(false);
     setSelectedPatient(null);
   }
+
   async function deletePatient(id:string){
     try {
       const res=await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/delete-patient/${id}`,{
@@ -153,21 +167,22 @@ function DisplayPatient() {
         setSidebar(false);
         closeModal();
         fetchPatients();
-            }
+      }
     } catch (error) {
       setToast({message:"failed to delete patient",variant:"error"})
       console.log(error)
     }
-      
-      
   }
+
   function cancelDelete() {
     setShowModal(false);
     setSelectedPatient(null);
   }
+
   function closeModal() {
     setModalConfig((prev) => ({ ...prev, isOpen: false }));
   }
+
   function handleDelete(patient:Patient){
     setModalConfig({
       isOpen: true,
@@ -351,6 +366,7 @@ function DisplayPatient() {
                 setDueDateFilter("All Dates");
                 setPriorityFilter("All Priorities");
                 setSearchQuery("");
+                setCurrentPage(1); // Reset to page 1 when clearing filters
               }}
               className="py-2 px-4 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-xl"
             >
@@ -387,17 +403,17 @@ function DisplayPatient() {
       )}
 
       {/* patients table starts from here  */}
-      <div className="rounded-xl relative">
+      <div className="rounded-xl relative pr-14">
         <div
-          className="absolute top-5 right-5 z-5 text-black group"
+          className="absolute top-5 right-5 z-10 text-black group"
           onClick={() => fetchPatients()}
         >
           <RefreshCwIcon />
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
+          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
             Refresh
           </span>
         </div>
-        <table className="min-w-full  text-sm text-left border border-gray-300 rounded-3xl">
+        <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
           <thead className="bg-gray-100 rounded-xl text-black font-medium  text-[16px]">
             <tr>
               <th className="px-6 py-5">ClientId</th>
@@ -412,7 +428,7 @@ function DisplayPatient() {
                     <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
 
                     {/* Tooltip on hover */}
-                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-white text-sm text-primary rounded-md shadow-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-5 whitespace-nowrap">
+                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-white text-sm text-primary rounded-md shadow-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 whitespace-nowrap">
                       Patients in emergency have higher priority
                     </div>
                   </div>
@@ -425,56 +441,97 @@ function DisplayPatient() {
           {loading ? (
             <TableShimmer />
           ) : (
-            <tbody className="bg-white divide-y divide-gray-100">
-              {filteredPatients?.map((patient, index) => (
-                <tr
-                  key={index}
-                  className="hover:bg-gray-50 text-[16px] transition duration-150"
-                >
-                  <td className="px-6 py-4">{patient.name}</td>
-                  <td className="px-6 py-4">{patient.firstName}</td>
-                  <td className="px-6 py-4">
-                    {patient.lastName}
-                  </td>
-                  <td className="px-6 py-4">{patient.email}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-2.5 rounded-xl font-medium ${
-                        patient.priority === "emergency"
-                          ? "bg-red-400 text-white"
-                          : patient.priority === "safe"
-                          ? "bg-yellow-400 text-white"
-                          : "bg-blue-100 text-blue-700"
-                      }`}
+            <>
+              <tbody className="bg-white divide-y divide-gray-100">
+                {currentPatients.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                      No patients found
+                    </td>
+                  </tr>
+                ) : (
+                  currentPatients.map((patient, index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-gray-50 text-[16px] transition duration-150"
                     >
-                      {`${
-                        patient.priority === "emergency"
-                          ? "Emergency 🚨"
-                          : "Safe"
-                      }`}
-                    </span>
-                  </td>
-                  <td className="pl-6 py-4 ">
-                    <div className="flex gap-3 items-center  justify-center">
-                     
-
-                      <button
-                        onClick={() => {
-                          setSidebar(true);
-                          setSelectedPatient(patient);
-                        }}
-                        className="bg-primary rounded-lg text-white p-2 group relative"
-                      >
-                        <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-5">
-                          View
+                      <td className="px-6 py-4">{patient.name}</td>
+                      <td className="px-6 py-4">{patient.firstName}</td>
+                      <td className="px-6 py-4">
+                        {patient.lastName}
+                      </td>
+                      <td className="px-6 py-4">{patient.email}</td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-2 py-2.5 rounded-xl font-medium ${
+                            patient.priority === "emergency"
+                              ? "bg-red-400 text-white"
+                              : patient.priority === "safe"
+                              ? "bg-yellow-400 text-white"
+                              : "bg-blue-100 text-blue-700"
+                          }`}
+                        >
+                          {`${
+                            patient.priority === "emergency"
+                              ? "Emergency 🚨"
+                              : "Safe"
+                          }`}
                         </span>
-                        <Eye />
+                      </td>
+                      <td className="pl-6 py-4 ">
+                        <div className="flex gap-3 items-center  justify-center">
+                          <button
+                            onClick={() => {
+                              setSidebar(true);
+                              setSelectedPatient(patient);
+                            }}
+                            className="bg-primary rounded-lg text-white p-2 group relative"
+                          >
+                            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
+                              View
+                            </span>
+                            <Eye />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan={6} className="px-6 py-4">
+                    <div className="flex justify-center items-center gap-2">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
+                      >
+                        «
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => (
+                        <button
+                          key={i + 1}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className={`px-3 py-1 border rounded ${
+                            currentPage === i + 1 ? "bg-primary font-bold text-white" : ""
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                      <button
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        className="px-3 py-1 border rounded disabled:opacity-50"
+                      >
+                        »
                       </button>
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
+              </tfoot>
+            </>
           )}
         </table>
       </div>
