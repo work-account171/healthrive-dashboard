@@ -19,6 +19,7 @@ import Toaster from "../Toaster";
 import TableShimmer from "../task-manager/TableShimmer";
 import ConfirmationModal from "../confirmModal";
 import { tr } from "date-fns/locale";
+import AddCsvModal from "./AddCsvModal";
 
 type Attachment = {
   id: string;
@@ -45,6 +46,7 @@ type Patient = {
 
 function DisplayPatient() {
   const [modal, setModal] = useState(false);
+  const [csvModal,setcsvModal]=useState(false)
   const [patient, setPatient] = useState<Patient[]>([]);
   const [sidebar, setSidebar] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -85,6 +87,13 @@ function DisplayPatient() {
       setModal(false);
     } else {
       setModal(true);
+    }
+  };
+  const addcsvModal = async () => {
+    if (csvModal === true) {
+      setcsvModal(false);
+    } else {
+      setcsvModal(true);
     }
   };
 
@@ -197,6 +206,7 @@ function DisplayPatient() {
   return (
     <>
       {modal ? <AddPatientModal /> : ""}
+      {csvModal ? <AddCsvModal/> : ""}
       {toast && (
         <Toaster
           message={toast.message}
@@ -324,13 +334,23 @@ function DisplayPatient() {
             insights and care phase tracking.
           </p>
         </div>
-        <button
+        <div className="flex justify-center items-center gap-2">
+            <button
           onClick={addPatientModal}
           className="bg-primary  cursor-pointer hover:bg-white hover:text-primary border border-primary text-white text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
         >
           <Plus />
           Add Patient
         </button>
+        <button
+          onClick={addcsvModal}
+          className="bg-primary  cursor-pointer hover:bg-white hover:text-primary border border-primary text-white text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
+        >
+          <Plus />
+          Upload CSV
+        </button>
+        </div>
+        
       </div>
       <div className="rounded-xl py-6 px-5 flex flex-col gap-5 border my-6 border-gray-100">
         <div className="flex justify-start text-2xl font-bold items-center gap-3.5">

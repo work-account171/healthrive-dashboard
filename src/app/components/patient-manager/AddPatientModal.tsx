@@ -5,14 +5,6 @@ import Toaster from "../Toaster";
 import { useRouter } from 'next/navigation';
 
 
-const categoriesList = [
-  "Labs",
-  "Medications",
-  "Follow-up",
-  "PA",
-  "Message/Document",
-];
-
 export interface UploadedFile {
   id: string;
   name: string;
@@ -21,7 +13,6 @@ export interface UploadedFile {
   url: string;
   uploadedAt: string;
 }
-const linkedServices = ["Healthie", "Spruce", "CoverMyMeds", "Google Calender"];
 const AddPatientModal=()=> {
       const [name,setName]=useState("")
       const [firstName, setfirstName] = useState("");
@@ -231,15 +222,15 @@ const AddPatientModal=()=> {
         >
           <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="name">
+              <label htmlFor="clientId">
                 clientID 
               </label>
               <input
                 type="text"
-                name="name"
+                name="clientId"
                 value={clientId}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter Patient Name"
+                placeholder="Enter Client Id"
                 onChange={(e) => setclientId(e.target.value)}
               />
             </div>
@@ -252,7 +243,7 @@ const AddPatientModal=()=> {
                 name="name"
                 value={name}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter Patient Name"
+                placeholder="Enter Patient full Name"
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
@@ -268,7 +259,7 @@ const AddPatientModal=()=> {
                 name="firstName"
                 value={firstName}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter Patient Name"
+                placeholder="Enter Patient&apos; first Name"
                 onChange={(e) => setfirstName(e.target.value)}
               />
             </div>
@@ -280,7 +271,7 @@ const AddPatientModal=()=> {
                 required
                 value={lastName}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter Care Phase i.e  ongoing, new care, stable"
+                placeholder="Enter Patient&apos; last Name"
                 onChange={(e) => setlastName(e.target.value)}
               />
             </div>
@@ -288,13 +279,13 @@ const AddPatientModal=()=> {
           
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
             <label htmlFor="patientDesc">
-              Description 
+              Description <span className="italic">(optional)</span>
             </label>
             <textarea
               name="patientDesc"
               value={patientDesc}
               className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-              placeholder="Enter patient description..."
+              placeholder="Enter Patient Description..."
               onChange={(e) => setPatientDesc(e.target.value)}
             />
           </div>
@@ -306,19 +297,19 @@ const AddPatientModal=()=> {
                 name="email"
                 value={email}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter patient's email if any"
+                placeholder="Enter Patient's email if any"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             
            <div className="flex w-full flex-col justify-start items-start gap-1.5">
-              <label htmlFor="phNumber">phNumber</label>
+              <label htmlFor="phNumber">Phone Number <span className="italic">(optional)</span></label>
               <input
                 type="tel"
                 name="phNumber"
                 value={phNumber}
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
-                placeholder="Enter patient's phone number if any"
+                placeholder="Enter Patient's Phone Number if any"
                 onChange={(e) => setphNumber(e.target.value)}
               />
             </div>
@@ -332,7 +323,7 @@ const AddPatientModal=()=> {
           <div className="w-full gap-5 flex justify-center items-center">
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
               <label htmlFor="priority">
-                Priority 
+                Priority <span className="italic">(optional)</span>
               </label>
               <select
                 name="priority"
@@ -470,7 +461,7 @@ const AddPatientModal=()=> {
           </div>
           <div className="flex justify-end items-end gap-5">
             <button
-              className="py-4 px-6 text-primary border border-primary rounded-xl hover:bg-red-200"
+              className="py-4 px-6 text-primary border border-primary hover:border-red-600 rounded-xl hover:text-red-600 cursor-pointer"
               onClick={handleModal}
             >
               Cancel
@@ -478,7 +469,7 @@ const AddPatientModal=()=> {
             <button
               type="submit"
               disabled={loading}
-              className="py-4 px-6 border border-primary rounded-xl bg-primary hover:bg-white hover:text-primary text-white"
+              className="py-4 px-6 border border-primary rounded-xl bg-primary hover:bg-white hover:text-primary text-white cursor-pointer"
             >
               {loading ? "Adding..." : "Add Patient"}
             </button>
