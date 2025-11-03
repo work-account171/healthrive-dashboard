@@ -35,11 +35,11 @@ export default function AddUserModal({
   const [isLoading, setIsLoading] = useState(false); // 👈 loading state
 
   const roles = [
-    { label: "Admin", value: "admin", icon: adminIcon },
+    // { label: "Admin", value: "admin", icon: adminIcon },
     { label: "Virtual Assistant", value: "virtual-assistant", icon: adminIcon },
-    { label: "Front Desk", value: "front-desk", icon: adminIcon },
-    { label: "Billing Team", value: "billing-team", icon: adminIcon },
-    { label: "Pharmacy Team", value: "pharmacy-team", icon: adminIcon },
+    // { label: "Front Desk", value: "front-desk", icon: adminIcon },
+    // { label: "Billing Team", value: "billing-team", icon: adminIcon },
+    // { label: "Pharmacy Team", value: "pharmacy-team", icon: adminIcon },
   ];
 
   if (!isOpen) return null;
