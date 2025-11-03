@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         { status: 409 }
       );
     } else {
-      const user = await User.create({
+      await User.create({
         ...body,
         password: hashedPassword,
       });
