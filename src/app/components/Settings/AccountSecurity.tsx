@@ -1,6 +1,14 @@
 "use client";
 
+import { useAppStore } from "@/app/stores/useAppStore";
+import { useState } from "react";
+
 export default function ProfileSection() {
+  const [name,setName]=useState("")
+  const [password,setPassword]=useState("************")
+  const [email,setEmail]=useState("")
+    const {  currentUser } = useAppStore();
+
   return (
    
     <div className="p-6 border border-gray-200 rounded-xl w-full">
@@ -17,8 +25,10 @@ export default function ProfileSection() {
           <label className="text-[16px] font-medium mb-2">Display Name *</label>
           <input
             type="text"
-            value="Dr. Chioma"
             readOnly
+            value={currentUser?.name}
+
+            onChange={(e)=>setName(e.target.value)}
             className="bg-gray-100 px-4 py-3 rounded-lg text-gray-700 font-medium"
           />
         </div>
@@ -29,8 +39,9 @@ export default function ProfileSection() {
           </label>
           <input
             type="email"
-            value="Chioma@clinic.com"
+            value={currentUser?.email}
             readOnly
+            onChange={(e)=>setEmail(e.target.value)}
             className="bg-gray-100 px-4 py-3 rounded-lg text-gray-700 font-medium"
           />
         </div>
@@ -39,8 +50,17 @@ export default function ProfileSection() {
       <hr className="my-6 border-gray-200" />
 
       <h2 className="text-[20px] font-semibold mb-4 font-outfit">Security</h2>
-
+      <div className="flex flex-col mb-6">
+          <label className="text-[16px] font-medium mb-2">Password</label>
+          <input
+            type="text"
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
+            className="bg-gray-100 px-4 py-3 rounded-lg text-gray-700 font-medium"
+          />
+        </div>
       <button className="flex items-center gap-2 px-4 py-2 border border-primary text-primary font-medium rounded-lg hover:bg-blue-50 transition-all">
+        
         <span className="text-sm">|**</span>
         Change Password
       </button>
