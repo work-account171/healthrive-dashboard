@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import UserRoleCard from "./UserRoleCard";
 import AddUserModal from "./AddUserModel";
+import Toaster from "../Toaster";
+import { Variable } from "lucide-react";
 
 type User = {
   _id: string;
@@ -16,6 +18,11 @@ const UserRolesAccess = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [toast,setToast]=useState<{
+    message:string;
+    variant:"success"|"error"|"warning"
+
+  }|null>(null);
 
   async function fetchUsers() {
     try {
@@ -57,7 +64,10 @@ const UserRolesAccess = () => {
       });
 
       if (res.ok) {
-        alert("User deleted successfully!");
+        setToast({
+          message:"user deleted successfully!",
+          variant:"success",
+        })
         setUsers((prev) => prev.filter((user) => user._id !== id));
       } else {
         const data = await res.json();
@@ -74,6 +84,15 @@ const UserRolesAccess = () => {
   }
 
   return (
+    <>
+  
+     {toast && (
+        <Toaster
+          message={toast.message}
+          variant={toast.variant}
+          onClose={() => setToast(null)}
+        />
+      )}
     <div className="p-[20px] w-full">
       <h2 className="text-xl font-medium mb-4">User Roles & Access Control</h2>
 
@@ -115,6 +134,7 @@ const UserRolesAccess = () => {
         onUserAdded={fetchUsers}
       />
     </div>
+      </>
   );
 };
 

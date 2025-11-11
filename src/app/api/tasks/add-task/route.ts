@@ -16,10 +16,11 @@ export async function POST(req:Request){
     try {
         const task=await Task.create(body);
         const emailSubject = "Task Creation by you!";
-              const emailtext = `Healthrive Task Creation `;
+              const emailtext = `Healthrive Task Update `;
               const emailHTML = `Dear Dr Chioma,<br>
                 Task <b>${title}</b> is succesfully created by you for patient name <b> ${patientName}</b>!
-                <br>Regards; The Healthrive Team`;
+                <br>Regards: The Healthrive Team<br>
+                Note:This is auto generated email`;
               await sendEmail(email, emailSubject, emailtext, emailHTML);
         return NextResponse.json({success:true,data:task},{status:201})
     } catch (error:unknown) {

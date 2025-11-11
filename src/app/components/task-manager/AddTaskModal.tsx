@@ -660,7 +660,7 @@ function AddTaskModal() {
         </div>
         <div className="flex justify-end items-end gap-5">
           <button
-            className="py-4 px-6 text-primary border border-primary rounded-xl hover:bg-red-200"
+            className="py-4 px-6 text-primary border border-primary rounded-xl hover:text-red-600 hover:border-red-600"
             onClick={handleModal}
             type="button"
           >

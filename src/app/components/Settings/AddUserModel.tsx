@@ -69,7 +69,7 @@ export default function AddUserModal({
 
       if (res.ok) {
         setToast({
-          message: "User created successfully",
+          message: "User created successfully, and credentials have been sent via email.",
           variant: "success",
         });
         onClose();

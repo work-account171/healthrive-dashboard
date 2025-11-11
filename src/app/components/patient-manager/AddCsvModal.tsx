@@ -110,7 +110,6 @@ const AddCsvModal = () => {
   };
 
   const parseCsvForPreview = (file: File) => {};
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null); // ✅ Typed correctly
   const [toast, setToast] = useState<{
     message: string;

@@ -21,9 +21,7 @@ const ToolCard = ({
 }: ToolCardProps) => {
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
-  const handleTagClick = (tag: string) => {
-    setActiveTag((prev) => (prev === tag ? null : tag)); // toggle
-  };
+
 
   return (
     <a href={link} target="_blank" className="flex flex-col cursor-pointer gap-[24px] border border-gray-200 rounded-xl px-[24px] pt-[24px] pb-[40px] lg:w-[33%] md:w-[47%] relative min-h-[223px]  hover:shadow-md">

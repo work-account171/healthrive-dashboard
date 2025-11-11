@@ -8,24 +8,7 @@ interface User {
   role: string;
 }
 
-interface Task {
-  _id: string;
-  patientName: string;
-  description: string;
-  dueDate: Date;
-  services: string[];
-  categories: string[];
-  assignee: string;
-  priority: "high" | "normal";
-  updatedAt: Date;
-}
 
-interface Patient{
-    _id:string,
-    name:string,
-    email:string,
-    phNo:string
-}
 
 interface Notification {
   _id: string
