@@ -12,7 +12,7 @@
 //     type: "success" | "error";
 //     text: string;
 //   } | null>(null);
-//   const { currentUser } = useAppStore(); 
+//   const { currentUser } = useAppStore();
 
 //   const handleUpdate = async () => {
 //     console.log("'handle update called")
@@ -78,15 +78,14 @@
 //       </h2>
 //       {message && (
 //         <div className={`p-3 rounded-lg mb-4 ${
-//           message.type === 'success' 
-//             ? 'bg-green-50 text-green-700 border border-green-200' 
+//           message.type === 'success'
+//             ? 'bg-green-50 text-green-700 border border-green-200'
 //             : 'bg-red-50 text-red-700 border border-red-200'
 //         }`}>
 //           {message.text}
 //         </div>
 //       )}
 // <form action="">
-
 
 //       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 //         <div className="flex flex-col">
@@ -140,7 +139,6 @@
 //   );
 // }
 
-
 "use client";
 
 import { useAppStore } from "@/app/stores/useAppStore";
@@ -164,7 +162,10 @@ export default function ProfileSection() {
 
     // Check empty fields
     if (!name && !email && !password) {
-      setMessage({ type: "error", text: "Please fill at least one field to update" });
+      setMessage({
+        type: "error",
+        text: "Please fill at least one field to update",
+      });
       return;
     }
 
@@ -181,17 +182,20 @@ export default function ProfileSection() {
     setMessage(null);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/edit-user`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: currentUser?.email, // use stored email for identification
-          ...(name && { name }),
-          ...(password && { password }),
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/edit-user`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: currentUser?.email, // use stored email for identification
+            ...(name && { name }),
+            ...(password && { password }),
+          }),
+        }
+      );
 
       console.log("Response status:", response.status);
       if (!response.ok) {
@@ -204,7 +208,7 @@ export default function ProfileSection() {
       console.log("API Response:", res);
 
       if (res.success) {
-        setMessage({ type: "success", text: res.message });
+        setMessage({ type: "success", text: "Profile updated successfully! Please refresh the page!"});
         setName("");
         setEmail("");
         setPassword("");
@@ -216,18 +220,39 @@ export default function ProfileSection() {
       console.error("Error updating profile:", error);
       setMessage({
         type: "error",
-        text:  "Failed to update profile",
+        text: "Failed to update profile",
       });
     } finally {
       setLoading(false);
     }
   };
+  function maskEmail(email: string): string {
+    const [local, domain] = email.split("@");
+    if (!local || !domain) return email;
+
+    const localLength = local.length;
+
+    if (localLength <= 4) {
+      // Too short, show first letter only
+      return local[0] + "*".repeat(localLength - 1) + "@" + domain;
+    }
+
+    const first = local.slice(0, 3); // first 3 letters
+    const last = local.slice(-2); // last 2 letters
+    const masked = "*".repeat(localLength - 5); // middle letters
+
+    return `${first}${masked}${last}@${domain}`;
+  }
 
   return (
     <div className="p-6 border border-gray-200 rounded-xl w-full">
-      <h2 className="text-[20px] font-medium pb-[40px]">Account & Security Settings</h2>
+      <h2 className="text-[20px] font-medium pb-[40px]">
+        Account & Security Settings
+      </h2>
 
-      <h2 className="text-[20px] font-semibold mb-4 h-fit">Profile Information</h2>
+      <h2 className="text-[20px] font-semibold mb-4 h-fit">
+        Profile Information
+      </h2>
 
       {message && (
         <div
@@ -244,7 +269,9 @@ export default function ProfileSection() {
       <form onSubmit={handleUpdate}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="flex flex-col">
-            <label className="text-[16px] font-medium mb-2">Display Name *</label>
+            <label className="text-[16px] font-medium mb-2">
+              Display Name *
+            </label>
             <input
               type="text"
               placeholder={currentUser?.name}
@@ -255,13 +282,16 @@ export default function ProfileSection() {
           </div>
 
           <div className="flex flex-col">
-            <label className="text-[16px] font-medium mb-2">Email Address *</label>
+            <label className="text-[16px] font-medium mb-2">
+              Email Address *
+            </label>
             <input
               type="email"
-              value={currentUser?.email || ""}
+              value={maskEmail(currentUser?.email || "")}
               readOnly
               className="bg-gray-100 px-4 py-3 rounded-lg text-gray-500 font-medium"
             />
+
             <div className="p-3 mt-1 rounded-xl bg-white text-gray-600 border border-gray-200 text-sm">
               Email can&apos;t be changed
             </div>
