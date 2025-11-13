@@ -8,7 +8,6 @@ import ToolCard from "../components/linked-tools/ToolCard";
 import icon2 from "@/../public/icons/Icon2.svg";
 import icon3 from "@/../public/icons/Icon3.svg";
 import icon4 from "@/../public/icons/Icon4.svg";
-import icon5 from "@/../public/icons/Icon5.svg";
 import icon6 from "@/../public/icons/Icon6.svg";
 
 const tools = [

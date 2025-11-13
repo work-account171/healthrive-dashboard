@@ -174,7 +174,6 @@ import icon8 from "@/../public/icons/Icon8.svg";
 import icon9 from "@/../public/icons/Icon9.svg";
 import icon10 from "@/../public/icons/Icon10.svg";
 import icon11 from "@/../public/icons/Icon11.svg";
-import { link } from "fs";
 
 const Linktool = () => {
   const tabs = [

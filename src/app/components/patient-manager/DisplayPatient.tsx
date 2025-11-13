@@ -18,7 +18,6 @@ import AddPatientModal from "./AddPatientModal";
 import Toaster from "../Toaster";
 import TableShimmer from "../task-manager/TableShimmer";
 import ConfirmationModal from "../confirmModal";
-import { tr } from "date-fns/locale";
 import AddCsvModal from "./AddCsvModal";
 
 type Attachment = {
@@ -141,14 +140,14 @@ function DisplayPatient() {
     fetchPatients();
   }, []);
 
-  function handleDeleteClick(patient: Patient) {
-    setSelectedPatient(patient);
-    if (showModal === false) {
-      setShowModal(true);
-    } else {
-      setShowModal(false);
-    }
-  }
+  // function handleDeleteClick(patient: Patient) {
+  //   setSelectedPatient(patient);
+  //   if (showModal === false) {
+  //     setShowModal(true);
+  //   } else {
+  //     setShowModal(false);
+  //   }
+  // }
 
   function confirmDelete(patient:Patient) {
     if (selectedPatient) {

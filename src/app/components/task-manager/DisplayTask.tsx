@@ -465,7 +465,7 @@ export default function DisplayTask() {
                     </td>
                   </tr>
                 ) : (
-                  currentTasks.map((task, index) => (
+                  currentTasks.map((task) => (
                     <tr
                       key={task._id}
                       className="hover:bg-gray-50 text-[16px] transition duration-150"
