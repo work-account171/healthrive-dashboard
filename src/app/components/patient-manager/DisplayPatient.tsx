@@ -32,6 +32,7 @@ type Attachment = {
 type Patient = {
   _id: string;
   name: string;
+  clientId:string;
   firstName:string;
   lastName:string;
   description: string;
@@ -474,7 +475,7 @@ function DisplayPatient() {
                       key={index}
                       className="hover:bg-gray-50 text-[16px] transition duration-150"
                     >
-                      <td className="px-6 py-4">{patient.name}</td>
+                      <td className="px-6 py-4">{patient.clientId}</td>
                       <td className="px-6 py-4">{patient.firstName}</td>
                       <td className="px-6 py-4">
                         {patient.lastName}

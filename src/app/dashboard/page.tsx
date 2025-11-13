@@ -113,7 +113,7 @@ export default function Dashboard() {
             borderColor="border-blue-400"
             textColor="text-blue-600"
             text="This Week"
-            link="/dashboard/task-manager"
+            link="/dashboard/due-week"
             number={loading?<NumberShimmer/>:taskWeek}
           />
           <TaskCard
