@@ -105,7 +105,7 @@ export default function Dashboard() {
             borderColor="border-yellow-400"
             textColor="text-yellow-600"
             text="Due Today"
-            link="/dashboard/task-manager"
+            link="/dashboard/due-today"
             number={loading?<NumberShimmer/>:taskToday}
           />
           <TaskCard
