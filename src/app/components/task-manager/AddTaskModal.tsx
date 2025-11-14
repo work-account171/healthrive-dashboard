@@ -451,7 +451,6 @@ function AddTaskModal() {
                 Select Assignee
               </option>
               <option value="Virtual Assistant">Virtual Assistant</option>
-              <option value="Front Desk">Front Desk</option>
             </select>
           </div>
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
@@ -488,7 +487,7 @@ function AddTaskModal() {
               <option value="high">High</option>
             </select>
           </div>
-          <div className="flex w-full flex-col justify-start items-start gap-1.5">
+          {/* <div className="flex w-full flex-col justify-start items-start gap-1.5">
             <label htmlFor="recurrance">Recurrence</label>
             <select
               name="recurrance"
@@ -501,9 +500,9 @@ function AddTaskModal() {
               <option value="daily">Daily</option>
               <option value="monthly">Monthly</option>
             </select>
-          </div>
+          </div> */}
         </div>
-        <div className="flex w-full flex-col justify-start items-start gap-1.5">
+        {/* <div className="flex w-full flex-col justify-start items-start gap-1.5">
           <div>
             <label className="font-semibold block mb-2">
               Linked Services <span className="text-red-500">*</span>
@@ -545,7 +544,7 @@ function AddTaskModal() {
               value={JSON.stringify(services)}
             />
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-col w-full gap-2">
           <label htmlFor="attachments" className="font-semibold text-sm">
             Attachments

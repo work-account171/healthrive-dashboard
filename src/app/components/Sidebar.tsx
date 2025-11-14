@@ -34,8 +34,8 @@ function Sidebars() {
   };
 
   return (
-    <div className=" flex">
-      <aside className="w-fit bg-white border-r border-primary flex flex-col overflow-y-auto p-6">
+    <div className=" flex shadow-lg top-20">
+      <aside className="w-fit  border-r border-primary flex flex-col overflow-y-auto p-6">
         <nav className="flex flex-col gap-5">
           {links.map(({ href, label, icon }) => {
             const isActive = pathname === href;

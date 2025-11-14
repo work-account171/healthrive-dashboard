@@ -97,7 +97,7 @@ export default function Dashboard() {
             borderColor="border-red-400"
             textColor="text-red-600"
             text="Overdue Tasks"
-            link="/dashboard/task-manager"
+            link="/dashboard/due-past"
             number={loading?<NumberShimmer/>:totalTasks}
           />
           <TaskCard
