@@ -135,7 +135,7 @@ const AddCsvModal = () => {
       }
       const patientsData = csvData.map((row, index) => {
         return {
-          clientId: row.clientId || row["clientId"] || "",
+          clientId: row.clientId || row["ClientId"] || "",
           name: row.name || row.name || row["Name"] || "",
           firstName: row.firstName || row["FirstName"] || "",
           lastName: row.lastName || row["LastName"] || "",

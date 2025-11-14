@@ -8,7 +8,6 @@ import {
   FileText,
   Image,
   Info,
-  Plus,
   RefreshCwIcon,
   Search,
   SlidersHorizontal,
