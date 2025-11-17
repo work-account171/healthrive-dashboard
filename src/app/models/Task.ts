@@ -28,6 +28,8 @@ export interface ITask extends Document {
   attachments: IAttachment[]; // Add this field
   createdAt: Date;
   updatedAt: Date;
+  notified: boolean,
+
 }
 
 const AttachmentSchema: Schema = new Schema({
@@ -37,6 +39,7 @@ const AttachmentSchema: Schema = new Schema({
   type: { type: String, required: true },
   url: { type: String, required: true },
   uploadedAt: { type: Date, default: Date.now }
+
 });
 
 const TaskSchema: Schema = new Schema(
@@ -58,7 +61,10 @@ const TaskSchema: Schema = new Schema(
       default: "normal",
     },
     recurrence: { type: String },
-    attachments: [AttachmentSchema] // Add this field
+    attachments: [AttachmentSchema],
+    notified: { type: Boolean, default: false },
+
+     // Add this field
   },
   { timestamps: true }
 );
