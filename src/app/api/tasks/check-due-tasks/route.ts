@@ -3,8 +3,13 @@ import dbConnect from "@/app/lib/db";
 import { sendEmail } from "@/app/lib/email";
 import Task from "@/app/models/Task";
 
-export async function GET() {
+export async function GET(req: Request) {
   await dbConnect;
+
+    const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const now = new Date();
 
@@ -27,5 +32,5 @@ export async function GET() {
     await task.save();
   }
 
-  return NextResponse.json({ success: true, count: overdueTasks.length });
+  return NextResponse.json({ success: true, sent: overdueTasks.length });
 }
