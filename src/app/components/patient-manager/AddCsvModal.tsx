@@ -234,7 +234,7 @@ const AddCsvModal = () => {
           <p className="text-gray-600 text-[16px]">
             Please upload a CSV file in order to add patients in bulk. Remember!
             Only CSV file is allowed, having clientId, Patient Name, first name,
-            last Name & email as default headers.
+            last Name & email as default headers. <span className="text-red-600">Please ensure you are uploading correct headers. Uploading wrong headers may cause uploading corrupted data to patient manager database. </span>
           </p>
         </div>
         <form

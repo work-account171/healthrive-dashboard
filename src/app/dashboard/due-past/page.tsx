@@ -228,7 +228,7 @@ const filteredTasks = tasks.filter((task) => {
         />
       )}
       <div className="flex justify-between items-center">
-        <div className="flex flex-col gap-4 justify-start items-start">
+        <div className="flex flex-col gap-4 justify-start items-start mb-4">
           <h1 className="text-[32px] font-bold">Past Due Task Manager</h1>
           <p className="text-[16px]">
             These tasks are overdue, but you can still complete them. Take them
@@ -245,7 +245,7 @@ const filteredTasks = tasks.filter((task) => {
       </div>
 
       {/* Filter search bar */}
-      <div className="rounded-xl py-6 px-5 flex flex-col gap-5 border border-gray-100">
+      <div className="rounded-xl mb-4 py-6 px-5 flex flex-col gap-5 border border-gray-100">
         <div className="flex justify-start text-2xl font-bold items-center gap-3.5">
           <SlidersHorizontal />
           Filters & Controls
