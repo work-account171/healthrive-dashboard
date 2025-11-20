@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "https://dashboard.healthrivemedical.com//api/check-due-tasks",
-      "schedule": "0 * * * *"
-    }
-  ]
-}
