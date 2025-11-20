@@ -23,7 +23,7 @@ export async function POST() {
     // Create the new super admin
     const admin = await User.create({
       name: "Dr Chioma",
-      email: "vork.acount.p171@gmail.com",
+      email: "drokafor59@gmail.com",
       password: hashedPassword,
       role: "super-admin",
     });

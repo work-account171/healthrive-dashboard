@@ -24,7 +24,7 @@ export async function GET(req: Request) {
       <br> Healthrive Dashboard</p>`
   for (const task of overdueTasks) {
    
-              await sendEmail("abdurrehman1722@gmail.com",emailSubject,emailtext,emailHTML);
+              await sendEmail("drokafor59@gmail.com",emailSubject,emailtext,emailHTML);
 
 
     // Optional: mark as notified to avoid repeated emails
