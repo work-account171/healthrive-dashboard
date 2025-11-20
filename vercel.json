@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "https://healthrive-dashboard.vercel.app/api/check-due-tasks",
+      "path": "https://dashboard.healthrivemedical.com//api/check-due-tasks",
       "schedule": "0 * * * *"
     }
   ]
