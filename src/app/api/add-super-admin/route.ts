@@ -10,20 +10,20 @@ export async function POST() {
 
     // Check if super admin already exists
     const existingAdmin = await User.findOne({ role: "super-admin" });
-    if (existingAdmin) {
-      return NextResponse.json(
-        { message: "Super admin already exists." },
-        { status: 400 }
-      );
-    }
+    // if (existingAdmin) {
+    //   return NextResponse.json(
+    //     { message: "Super admin already exists." },
+    //     { status: 400 }
+    //   );
+    // }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash("Admin123!", 10);
 
     // Create the new super admin
     const admin = await User.create({
-      name: "Dr Chioma",
-      email: "drokafor59@gmail.com",
+      name: "Test account",
+      email: "vork.acount.p171@gmail.com",
       password: hashedPassword,
       role: "super-admin",
     });

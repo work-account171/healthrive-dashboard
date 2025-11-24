@@ -2,9 +2,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import TaskCard from "../components/dashboard/TaskCard";
-import NumberShimmer from "../components/dashboard/NumberShimmer";
-import ToolCard from "../components/linked-tools/ToolCard";
+import TaskCard from "../../components/dashboard/TaskCard";
+import NumberShimmer from "../../components/dashboard/NumberShimmer";
+import ToolCard from "../../components/linked-tools/ToolCard";
 import icon2 from "@/../public/icons/Icon2.svg";
 import icon3 from "@/../public/icons/Icon3.svg";
 import icon4 from "@/../public/icons/Icon4.svg";
@@ -97,7 +97,7 @@ export default function Dashboard() {
             borderColor="border-red-400"
             textColor="text-red-600"
             text="Overdue Tasks"
-            link="/dashboard/due-past"
+            link="/due-past"
             number={loading?<NumberShimmer/>:totalTasks}
           />
           <TaskCard
@@ -105,7 +105,7 @@ export default function Dashboard() {
             borderColor="border-yellow-400"
             textColor="text-yellow-600"
             text="Due Today"
-            link="/dashboard/due-today"
+            link="/due-today"
             number={loading?<NumberShimmer/>:taskToday}
           />
           <TaskCard
@@ -113,7 +113,7 @@ export default function Dashboard() {
             borderColor="border-blue-400"
             textColor="text-blue-600"
             text="This Week"
-            link="/dashboard/due-week"
+            link="/due-week"
             number={loading?<NumberShimmer/>:taskWeek}
           />
           <TaskCard
@@ -121,7 +121,7 @@ export default function Dashboard() {
             borderColor="border-green-400"
             textColor="text-green-600"
             text="Completed"
-            link="/dashboard/completed-tasks"
+            link="/completed-tasks"
             number={loading?<NumberShimmer/>:completedTask}
           />
         </div>

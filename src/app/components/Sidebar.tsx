@@ -17,11 +17,11 @@ function Sidebars() {
 
   const links = [
     { href: "/dashboard", label: "Dashboard", icon: dashboardIcon },
-    { href: "/dashboard/task-manager", label: "Task Manager", icon: taskIcon },
-    { href: "/dashboard/patient-manager", label: "Patient Management", icon: patientIcon },
-    { href: "/dashboard/linked-tools", label: "Linked Tools", icon: LinkIcon },
-    { href: "/dashboard/calender", label: "Calendar", icon: calendarIcon },
-    { href: "/dashboard/settings", label: "Settings", icon: settingIcon },
+    { href: "/task-manager", label: "Task Manager", icon: taskIcon },
+    { href: "/patient-manager", label: "Patient Management", icon: patientIcon },
+    { href: "/linked-tools", label: "Linked Tools", icon: LinkIcon },
+    { href: "/calender", label: "Calendar", icon: calendarIcon },
+    { href: "/settings", label: "Settings", icon: settingIcon },
   ];
 
   const handleLogout = async () => {
