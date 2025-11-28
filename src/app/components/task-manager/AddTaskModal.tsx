@@ -310,11 +310,12 @@ function AddTaskModal() {
 
 
   return (
-    <div
-      className={`modal z-20 bg-white rounded-xl left-1/2 transform -translate-x-1/2 overflow-y-scroll scrollbar-none h-screen border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-md w-1/2 ${
-        !modal ? "absolute top-2" : "hidden"
-      }`}
-    >
+    <>
+      {!modal && (
+        <div className="fixed inset-0 bg-white/30 backdrop-blur-sm z-20 flex items-center justify-center">
+          <div
+            className="modal z-20 bg-white rounded-xl overflow-y-scroll scrollbar-none border border-gray-200 py-7 flex flex-col gap-6 px-6 shadow-2xl w-1/2 max-h-[90vh]"
+          >
       <X
         className="absolute top-3 right-3 border rounded-full p-1 cursor-pointer font-bold hover:text-red-500"
         onClick={handleModal}
@@ -674,7 +675,10 @@ function AddTaskModal() {
           </button>
         </div>
       </form>
-    </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
