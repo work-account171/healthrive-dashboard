@@ -34,44 +34,44 @@ function Sidebars() {
   };
 
   return (
-    <div className=" flex shadow-lg top-20">
-      <aside className="w-fit  border-r border-primary flex flex-col overflow-y-auto p-6">
-        <nav className="flex flex-col gap-5">
-          {links.map(({ href, label, icon }) => {
-            const isActive = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-2.5 py-3 px-4 rounded-xl text-[16px] font-semibold ${
-                  isActive ? "bg-primary text-white" : "text-black hover:bg-gray-100"
-                }`}
-              >
-                <Image
-                  src={icon}
-                  alt={`${label} icon`}
-                  width={30}
-                  height={30}
-                  className={isActive ? "brightness-0 invert" : ""}
-                />
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
+    <aside className="sticky top-20 h-[calc(100vh-5rem)] w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+      <nav className="flex flex-col gap-2  mt-4 p-4 flex-1 overflow-y-auto">
+        {links.map(({ href, label, icon }) => {
+          const isActive = pathname === href;
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex items-center gap-3 py-3 px-4 rounded-xl text-[15px] font-semibold transition-all duration-200 ${
+                isActive
+                  ? "bg-primary text-white shadow-md shadow-primary/20"
+                  : "text-gray-700 hover:bg-gray-50 hover:text-primary"
+              }`}
+            >
+              <Image
+                src={icon}
+                alt={`${label} icon`}
+                width={22}
+                height={22}
+                className={isActive ? "brightness-0 invert" : "opacity-70"}
+              />
+              <span className={isActive ? "font-bold" : "font-medium"}>{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
-        {/* Spacer div to push logout to bottom */}
-        <div className="flex-grow" />
-
+      {/* Logout Button */}
+      <div className="p-4 border-t border-gray-200 bg-gray-50/50">
         <button
           onClick={handleLogout}
-          className="bg-gray-200 py-3 px-4 flex items-center gap-2.5 text-[16px] font-bold hover:bg-red-600 hover:text-white rounded-xl mt-4"
+          className="w-full bg-gray-100 hover:bg-red-600 py-3 px-4 flex items-center justify-center gap-2.5 text-[15px] font-semibold text-gray-700 hover:text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
         >
-          <LogOutIcon />
+          <LogOutIcon className="w-5 h-5" />
           Logout
         </button>
-      </aside>
-    </div>
+      </div>
+    </aside>
   );
 }
 

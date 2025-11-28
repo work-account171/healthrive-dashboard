@@ -27,7 +27,6 @@ interface Patient {
   name: string;
 }
 
-const linkedServices = ["Healthie", "Spruce", "CoverMyMeds", "Google Calendar"];
 
 function AddTaskModal() {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -204,17 +203,17 @@ function AddTaskModal() {
     }
   };
 
-  const toggleServices = (service: string) => {
-    setServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service]
-    );
-  };
+  // const toggleServices = (service: string) => {
+  //   setServices((prev) =>
+  //     prev.includes(service)
+  //       ? prev.filter((s) => s !== service)
+  //       : [...prev, service]
+  //   );
+  // };
 
-  const removeServices = (service: string) => {
-    setServices((prev) => prev.filter((s) => s !== service));
-  };
+  // const removeServices = (service: string) => {
+  //   setServices((prev) => prev.filter((s) => s !== service));
+  // };
 
   const toggleCategory = (category: string) => {
     setSelected((prev) =>

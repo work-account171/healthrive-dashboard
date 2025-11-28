@@ -1,8 +1,34 @@
 import dbConnect from "@/app/lib/db";
 import { sendEmail } from "@/app/lib/email";
 import Task from "@/app/models/Task";
+import Patient, { IPatient } from "@/app/models/Patient";
 import { NextResponse } from "next/server";
 
+// Helper function to create de-identified patient name
+function getDeIdentifiedPatientName(patient: IPatient | null): string {
+  if (!patient) {
+    return "Patient";
+  }
+  
+  // Prefer clientId if available
+  if (patient.clientId) {
+    return `Patient ID: ${patient.clientId}`;
+  }
+  
+  // Otherwise use firstName + last initial
+  if (patient.firstName && patient.lastName) {
+    const lastInitial = patient.lastName.charAt(0).toUpperCase();
+    return `${patient.firstName} ${lastInitial}.`;
+  }
+  
+  // Fallback: if only firstName is available
+  if (patient.firstName) {
+    return patient.firstName;
+  }
+  
+  // Last resort: return generic identifier
+  return "Patient";
+}
 
 export async function POST(req:Request){
     await dbConnect();
@@ -15,6 +41,20 @@ export async function POST(req:Request){
 
     try {
         const task=await Task.create(body);
+        
+        // Look up patient to get de-identified information
+        let deIdentifiedPatientName = "Patient";
+        try {
+          const patient = await Patient.findOne({ name: patientName });
+          if (patient) {
+            deIdentifiedPatientName = getDeIdentifiedPatientName(patient);
+          }
+        } catch (patientError) {
+          console.error("Error fetching patient for de-identification:", patientError);
+          // If patient lookup fails, use a generic identifier
+          deIdentifiedPatientName = "Patient";
+        }
+        
         const emailSubject = "Task Creation by you!";
               const emailtext = `Healthrive Task Update `;
               const emailHTML = `
@@ -34,8 +74,7 @@ export async function POST(req:Request){
 
       <p style="font-size: 15px; color: #333; line-height: 1.6;">
         Dear <b>Dr Chioma</b>,<br><br>
-        Task <b>${title}</b> has been successfully created by you for the patient 
-        <b>${patientName}</b>.
+        Task <b>${title}</b> has been successfully created by you for ${deIdentifiedPatientName}.
       </p>
 
       <p style="margin-top: 30px; font-size: 14px; color: #555;">

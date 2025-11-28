@@ -225,38 +225,45 @@ const filteredTasks = tasks.filter((task) => {
           onClose={() => setToast(null)}
         />
       )}
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col gap-4 justify-start items-start mb-3">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col gap-4 justify-start items-start">
           <h1 className="text-[32px] font-bold">Due Today</h1>
-          <p className="text-[16px]">
-Today&apos;s tasks are ready for you. Take them one step at a time — you&apos;re capable of achieving great progress!          </p>
+          <p className="text-[16px] text-gray-600">
+            Today&apos;s tasks are ready for you. Take them one step at a time — you&apos;re capable of achieving great progress!
+          </p>
         </div>
-        {/* <button
-          onClick={addTaskModal}
-          className="bg-primary cursor-pointer hover:bg-white hover:text-primary border border-primary text-white text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6"
-        >
-          <Plus />
-          Add Task
-        </button> */}
+        <div className="flex justify-center items-center gap-3">
+          <button
+            onClick={() => fetchTasks()}
+            className="bg-white cursor-pointer hover:bg-gray-50 border-2 border-gray-200 text-gray-700 text-[16px] font-semibold rounded-xl flex gap-2.5 justify-center items-center py-4 px-6 transition-all duration-200 hover:border-primary hover:text-primary"
+            title="Refresh task list"
+          >
+            <RefreshCwIcon className="w-5 h-5" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Filter search bar */}
-      <div className="rounded-xl py-6 px-5 flex flex-col gap-5 border border-gray-100 mb-3">
-        <div className="flex justify-start text-2xl font-bold items-center gap-3.5">
-          <SlidersHorizontal />
+      <div className="rounded-xl py-6 px-6 flex flex-col gap-5 border my-2 border-gray-200 bg-white shadow-sm">
+        <div className="flex justify-start text-xl font-bold items-center gap-3 text-gray-800">
+          <SlidersHorizontal className="w-5 h-5 text-primary" />
           Filters & Controls
         </div>
-        <div className="flex justify-start items-start gap-6 w-full">
-          <div className="py-3 px-4 flex justify-start items-center w-full bg-gray-100 gap-2.5 rounded-xl border border-gray-200">
-            <Search />
+        <div className="flex justify-between items-start gap-4 w-full flex-wrap">
+          <div className="py-3 px-4 flex justify-start items-center w-[70%] bg-gray-50 gap-3 rounded-xl border border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+            <Search className="w-5 h-5 text-gray-400" />
             <input
               type="text"
-              className="w-full outline-0"
+              className="w-full outline-0 bg-transparent text-gray-700 placeholder:text-gray-400"
               placeholder="Search by patient name or task.."
+              value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="py-3 px-4 border border-gray-200 text-[16px] bg-white rounded-xl w-40">Due Today</div>
+          <div className="py-3 px-4 border border-primary text-[16px] font-semibold text-primary bg-white rounded-xl w-48 flex items-center justify-center">
+            Due Today
+          </div>
           {/* <select
             value={dueDateFilter}
             onChange={(e) => setDueDateFilter(e.target.value)}
@@ -314,163 +321,217 @@ Today&apos;s tasks are ready for you. Take them one step at a time — you&apos;
       <div
         className={`sidebar ${
           sidebar ? "translate-x-0" : "translate-x-full"
-        } fixed transition-transform duration-300 ease-in-out w-1/3 z-10 p-8 flex flex-col gap-6 border border-primary bg-white h-screen top-0 right-0`}
+        } fixed transition-transform duration-300 ease-in-out w-full max-w-md z-50 bg-white h-screen top-0 right-0 shadow-2xl overflow-y-auto`}
       >
-        <button
-          onClick={() => {
-            setSidebar(false);
-            setSelectedTask(null);
-          }}
-          className="p-2 rounded-md border text-primary border-primary absolute top-6 right-6"
-        >
-          <X />
-        </button>
-        <div className="flex flex-col gap-4">
-          <div className="flex gap-4">
-            <h1 className="text-4xl font-bold">{selectedTask?.title}</h1>
-            <p className="bg-green-200 rounded-xl text-green-500 px-2.5 py-1.5">
-              Active
-            </p>
-            <p
-              className={`rounded-xl ${
-                selectedTask?.priority === "high" ? "bg-red-600" : "bg-yellow-300"
-              } text-white px-2.5 py-1.5`}
-            >
-              {selectedTask?.priority === "high" ? "Urgent" : "Normal"}
-            </p>
-          </div>
-          <p className="text-gray-600 text-[16px]">{selectedTask?.description}</p>
+        {/* Header with Close Button */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-5 flex items-center justify-between z-10 shadow-sm">
+          <h2 className="text-xl font-bold text-gray-900">Task Details</h2>
           <button
-            onClick={confirmDelete}
-            className="cursor-pointer bg-primary px-4 py-2 rounded-xl w-fit text-white flex gap-2.5"
+            onClick={() => {
+              setSidebar(false);
+              setSelectedTask(null);
+            }}
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+            title="Close"
           >
-            <CheckCheckIcon />
-            Mark as Done
+            <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 text-primary w-full">
-          <h1 className="text-black text-xl">Task Information</h1>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-[16px]">
-              Assigned to: <span className="underline">{selectedTask?.assignee}</span>
-            </h1>
-            <h1 className="text-[16px]">
-              Deadline:{" "}
-              <span className="font-semibold text-red-500">
-                {selectedTask &&
-                  new Date(selectedTask.dueDate).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-              </span>
-            </h1>
-          </div>
-        </div>
-        <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
-          <h1 className="text-black text-xl">Other Information</h1>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-[16px]">Task Categories:</h1>
-            <div className="flex justify-start items-start gap-2">
-              {selectedTask?.categories.map((category) => (
-                <div
-                  key={category}
-                  className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
+
+        {/* Content */}
+        <div className="p-6 flex flex-col gap-6">
+          {/* Title and Status Section */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-start gap-3">
+              <h1 className="text-3xl font-bold text-gray-900 flex-1 min-w-[200px]">
+                {selectedTask?.title || "Untitled Task"}
+              </h1>
+              <div className="flex gap-2 flex-wrap">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                  Active
+                </span>
+                <span
+                  className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${
+                    selectedTask?.priority === "high"
+                      ? "bg-red-100 text-red-700 border border-red-200"
+                      : "bg-blue-100 text-blue-700 border border-blue-200"
+                  }`}
                 >
-                  {category}
-                </div>
-              ))}
+                  {selectedTask?.priority === "high" ? (
+                    <>
+                      <span className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5 animate-pulse"></span>
+                      Urgent
+                    </>
+                  ) : (
+                    "Normal"
+                  )}
+                </span>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-[16px]">Linked services:</h1>
-            <div className="flex justify-start items-start gap-2">
-              {selectedTask?.services.map((service) => (
-                <div
-                  key={service}
-                  className="bg-blue-100 px-2 py-1 w-fit text-blue-600 rounded-full"
-                >
-                  {service}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="rounded-xl border border-gray-300 p-4 flex flex-col gap-2.5 w-full">
-          <h1 className="text-black text-xl">Attachments</h1>
-          <div className="flex flex-col gap-3">
-            {selectedTask?.attachments && selectedTask.attachments.length > 0 ? (
-              selectedTask.attachments.map((attachment) => (
-                <div
-                  key={attachment.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
-                >
-                  <div className="flex items-center space-x-3">
-                    {attachment.type.includes("pdf") ? (
-                      <FileText className="w-5 h-5 text-red-500" />
-                    ) : attachment.type.includes("image") ? (
-                      <Image className="w-5 h-5 text-blue-500" />
-                    ) : (
-                      <File className="w-5 h-5 text-gray-500" />
-                    )}
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-gray-900 truncate max-w-xs">
-                        {attachment.name}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {Math.round(attachment.size / 1024)} KB •{" "}
-                        {new Date(attachment.uploadedAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => window.open(attachment.url, "_blank")}
-                    className="p-2 text-gray-500 hover:text-blue-600 transition-colors"
-                    title="Download file"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No files attached to this task</p>
+            {selectedTask?.description && (
+              <p className="text-gray-600 text-[16px] leading-relaxed">
+                {selectedTask.description}
+              </p>
             )}
+            <button
+              onClick={confirmDelete}
+              className="cursor-pointer bg-primary hover:bg-[#3565a0] px-5 py-3 rounded-xl w-fit text-white flex items-center gap-2.5 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              <CheckCheckIcon className="w-5 h-5" />
+              Mark as Done
+            </button>
+          </div>
+
+          {/* Task Information Card */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 flex flex-col gap-4">
+            <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              Task Information
+            </h3>
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-gray-500">Assigned to</span>
+                <span className="text-[16px] text-gray-900 font-semibold">
+                  {selectedTask?.assignee || "Unassigned"}
+                </span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium text-gray-500">Deadline</span>
+                <span className="text-[16px] font-semibold text-red-600">
+                  {selectedTask?.dueDate
+                    ? new Date(selectedTask.dueDate).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "No deadline set"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Other Information Card */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 flex flex-col gap-4">
+            <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              Additional Information
+            </h3>
+            <div className="flex flex-col gap-4">
+              {selectedTask?.categories && selectedTask.categories.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-gray-500">Task Categories</span>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTask.categories.map((category) => (
+                      <span
+                        key={category}
+                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20"
+                      >
+                        {category}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {selectedTask?.services && selectedTask.services.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-gray-500">Linked Services</span>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTask.services.map((service) => (
+                      <span
+                        key={service}
+                        className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200"
+                      >
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Attachments Card */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 flex flex-col gap-4">
+            <h3 className="text-lg font-bold text-gray-900 border-b border-gray-200 pb-2">
+              Attachments
+            </h3>
+            <div className="flex flex-col gap-3">
+              {selectedTask?.attachments && selectedTask.attachments.length > 0 ? (
+                selectedTask.attachments.map((attachment) => (
+                  <div
+                    key={attachment.id}
+                    className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:border-primary/50 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      {attachment.type.includes("pdf") ? (
+                        <FileText className="w-6 h-6 text-red-500 flex-shrink-0" />
+                      ) : attachment.type.includes("image") ? (
+                        <Image className="w-6 h-6 text-blue-500 flex-shrink-0" />
+                      ) : (
+                        <File className="w-6 h-6 text-gray-500 flex-shrink-0" />
+                      )}
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <span className="text-sm font-medium text-gray-900 truncate">
+                          {attachment.name}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {Math.round(attachment.size / 1024)} KB •{" "}
+                          {new Date(attachment.uploadedAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => window.open(attachment.url, "_blank")}
+                      className="p-2 text-gray-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors ml-2 flex-shrink-0"
+                      title="Download file"
+                    >
+                      <Download className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm py-4 text-center">
+                  No files attached to this task
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Display tasks table */}
-      <div className="rounded-xl relative pr-14">
-        <div
-          className="absolute top-5 right-5 z-10 text-black group"
-          onClick={() => fetchTasks()}
-        >
-          <RefreshCwIcon />
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
-            Refresh
-          </span>
-        </div>
-        <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
-          <thead className="bg-gray-100 rounded-xl text-black font-medium text-[16px]">
-            <tr>
-              <th className="px-6 py-5">Task</th>
-              <th className="px-6 py-5">Patient</th>
-              <th className="px-6 py-5">Due Date</th>
-              <th className="px-6 py-5">Assignee</th>
-              <th className="px-6 py-5">
-                <div className="flex items-center gap-2">
-                  Status
-                  <div className="relative group">
-                    <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
-                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-white text-sm text-primary rounded-md shadow-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 whitespace-nowrap">
-                      Urgent tasks have higher priority
+      <div className="rounded-xl overflow-hidden border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-4 text-gray-700 font-semibold text-[15px] uppercase tracking-wider">
+                  Task
+                </th>
+                <th className="px-6 py-4 text-gray-700 font-semibold text-[15px] uppercase tracking-wider">
+                  Patient
+                </th>
+                <th className="px-6 py-4 text-gray-700 font-semibold text-[15px] uppercase tracking-wider">
+                  Due Date
+                </th>
+                <th className="px-6 py-4 text-gray-700 font-semibold text-[15px] uppercase tracking-wider">
+                  Assignee
+                </th>
+                <th className="px-6 py-4 text-gray-700 font-semibold text-[15px] uppercase tracking-wider">
+                  <div className="flex items-center gap-2">
+                    Status
+                    <div className="relative group">
+                      <Info className="w-4 h-4 text-gray-400 cursor-pointer hover:text-primary transition-colors" />
+                      <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max bg-gray-900 text-white text-xs rounded-md shadow-xl px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 whitespace-nowrap pointer-events-none">
+                        Urgent tasks have higher priority
+                        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </th>
-              <th className="pl-28 py-5">Action</th>
-            </tr>
-          </thead>
+                </th>
+                <th className="px-6 py-4 text-gray-700 font-semibold text-[15px] uppercase tracking-wider text-center">
+                  Actions
+                </th>
+              </tr>
+            </thead>
           {loading ? (
             <TableShimmer />
           ) : (
@@ -478,59 +539,67 @@ Today&apos;s tasks are ready for you. Take them one step at a time — you&apos;
               <tbody className="bg-white divide-y divide-gray-100">
                 {currentTasks.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
-                      No tasks found
+                    <td colSpan={6} className="px-6 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <p className="text-gray-500 text-lg font-medium">No tasks found</p>
+                        <p className="text-gray-400 text-sm">Try adjusting your filters or add a new task</p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   currentTasks.map((task) => (
                     <tr
                       key={task._id}
-                      className="hover:bg-gray-50 text-[16px] transition duration-150"
+                      className="hover:bg-gray-50/80 text-[15px] transition-all duration-200 border-b border-gray-100 last:border-b-0"
                     >
-                      <td className="px-6 py-4">{task.title}</td>
-                      <td className="px-6 py-4">{task.patientName}</td>
-                      <td className="px-6 py-4">
-                        {new Date(task.dueDate).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                      <td className="px-6 py-4 font-medium text-gray-900">{task.title || "—"}</td>
+                      <td className="px-6 py-4 text-gray-700">{task.patientName || "—"}</td>
+                      <td className="px-6 py-4 text-gray-700">
+                        {task.dueDate
+                          ? new Date(task.dueDate).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : "—"}
                       </td>
-                      <td className="px-6 py-4">{task.assignee}</td>
+                      <td className="px-6 py-4 text-gray-700">{task.assignee || "—"}</td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2 py-2.5 rounded-xl font-medium ${
+                          className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${
                             task.priority === "high"
-                              ? "bg-red-600 text-white"
-                              : "bg-yellow-400 text-white"
+                              ? "bg-red-100 text-red-700 border border-red-200"
+                              : "bg-blue-100 text-blue-700 border border-blue-200"
                           }`}
                         >
-                          {task.priority === "high" ? "Urgent" : "Normal"}
+                          {task.priority === "high" ? (
+                            <>
+                              <span className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5 animate-pulse"></span>
+                              Urgent
+                            </>
+                          ) : (
+                            "Normal"
+                          )}
                         </span>
                       </td>
-                      <td className="pl-6 py-4">
-                        <div className="flex gap-3 items-center justify-center">
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2 items-center justify-center">
                           <button
                             onClick={() => handleDeleteClick(task)}
-                            className="bg-green-500 group relative rounded-lg text-white p-2 cursor-pointer"
+                            className="bg-green-600 hover:bg-green-700 group relative rounded-lg text-white p-2.5 transition-all duration-200 shadow-sm hover:shadow-md"
+                            title="Mark as done"
                           >
-                            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
-                              Mark as done
-                            </span>
-                            <Check />
+                            <Check className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => {
                               setSidebar(true);
                               setSelectedTask(task);
                             }}
-                            className="bg-primary rounded-lg text-white p-2 group relative"
+                            className="bg-primary hover:bg-[#3565a0] rounded-lg text-white p-2.5 group relative transition-all duration-200 shadow-sm hover:shadow-md"
+                            title="View task details"
                           >
-                            <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-10">
-                              View
-                            </span>
-                            <Eye />
+                            <Eye className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -540,40 +609,52 @@ Today&apos;s tasks are ready for you. Take them one step at a time — you&apos;
               </tbody>
               <tfoot>
                 <tr>
-                  <td colSpan={6} className="px-6 py-4">
-                    <div className="flex justify-center items-center gap-2">
-                      <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className="px-3 py-1 border rounded disabled:opacity-50"
-                      >
-                        «
-                      </button>
-                      {Array.from({ length: totalPages }, (_, i) => (
+                  <td colSpan={6} className="px-6 py-5 bg-gray-50 border-t border-gray-200">
+                    <div className="flex justify-between items-center flex-col gap-4">
+                      <div className="text-sm text-gray-600">
+                        Showing <span className="font-semibold text-gray-900">{indexOfFirstTask + 1}</span> to{" "}
+                        <span className="font-semibold text-gray-900">
+                          {Math.min(indexOfLastTask, filteredTasks.length)}
+                        </span>{" "}
+                        of <span className="font-semibold text-gray-900">{filteredTasks.length}</span> tasks
+                      </div>
+                      <div className="flex justify-center items-center gap-2">
                         <button
-                          key={i + 1}
-                          onClick={() => setCurrentPage(i + 1)}
-                          className={`px-3 py-1 border rounded ${
-                            currentPage === i + 1 ? "bg-primary font-bold text-white" : ""
-                          }`}
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage(currentPage - 1)}
+                          className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 hover:border-primary hover:text-primary transition-all duration-200 font-medium text-gray-700 disabled:hover:bg-white disabled:hover:border-gray-300 disabled:hover:text-gray-700"
                         >
-                          {i + 1}
+                          « Previous
                         </button>
-                      ))}
-                      <button
-                        disabled={currentPage === totalPages}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className="px-3 py-1 border rounded disabled:opacity-50"
-                      >
-                        »
-                      </button>
+                        {Array.from({ length: totalPages }, (_, i) => (
+                          <button
+                            key={i + 1}
+                            onClick={() => setCurrentPage(i + 1)}
+                            className={`px-4 py-2 min-w-[40px] border rounded-lg transition-all duration-200 font-medium ${
+                              currentPage === i + 1
+                                ? "bg-primary text-white border-primary shadow-md"
+                                : "border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-primary hover:text-primary"
+                            }`}
+                          >
+                            {i + 1}
+                          </button>
+                        ))}
+                        <button
+                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPage(currentPage + 1)}
+                          className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 hover:border-primary hover:text-primary transition-all duration-200 font-medium text-gray-700 disabled:hover:bg-white disabled:hover:border-gray-300 disabled:hover:text-gray-700"
+                        >
+                          Next »
+                        </button>
+                      </div>
                     </div>
                   </td>
                 </tr>
               </tfoot>
             </>
           )}
-        </table>
+          </table>
+        </div>
       </div>
 
       {/* Modal for marking task as done */}
