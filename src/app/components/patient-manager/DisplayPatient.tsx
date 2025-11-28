@@ -424,7 +424,7 @@ function DisplayPatient() {
 
       {/* patients table starts from here  */}
       <div className="rounded-xl relative pr-14">
-        <div
+           <div
           className="absolute top-5 right-5 z-10 text-black group"
           onClick={() => fetchPatients()}
         >
@@ -433,7 +433,8 @@ function DisplayPatient() {
             Refresh
           </span>
         </div>
-        <table className="min-w-full rounded-xl text-sm text-left border border-gray-200">
+        <table className=" w-full rounded-2xl text-sm text-left border border-gray-200">
+       
           <thead className="bg-gray-100 rounded-xl text-black font-medium  text-[16px]">
             <tr>
               <th className="px-6 py-5">ClientId</th>

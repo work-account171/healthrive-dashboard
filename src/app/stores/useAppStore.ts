@@ -8,8 +8,6 @@ interface User {
   role: string;
 }
 
-
-
 interface Notification {
   _id: string
   message: string

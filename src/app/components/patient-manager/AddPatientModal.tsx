@@ -147,7 +147,7 @@ const AddPatientModal=()=> {
     
         const newPatient = {
           clientId,
-          name,
+          name:firstName+" "+lastName,
           firstName,
           lastName,
           description: patientDesc,
@@ -236,12 +236,13 @@ const AddPatientModal=()=> {
             </div>
             <div className="flex w-full flex-col justify-start items-start gap-1.5">
               <label htmlFor="name">
-                Full Name 
+                Full Name <span className='italic text-gray-600'>automated generated</span>
               </label>
               <input
                 type="text"
                 name="name"
-                value={name}
+                value={firstName+" "+lastName}
+                disabled
                 className="py-4 px-5 w-full bg-gray-100 placeholder:text-gray-600 rounded-xl"
                 placeholder="Enter Patient full Name"
                 onChange={(e) => setName(e.target.value)}
