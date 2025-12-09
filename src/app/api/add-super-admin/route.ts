@@ -9,7 +9,7 @@ export async function POST() {
     await dbConnect();
 
     // Check if super admin already exists
-    const existingAdmin = await User.findOne({ role: "super-admin" });
+    // const existingAdmin = await User.findOne({ role: "super-admin" });
     // if (existingAdmin) {
     //   return NextResponse.json(
     //     { message: "Super admin already exists." },

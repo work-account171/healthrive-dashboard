@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import UserRoleCard from "./UserRoleCard";
 import AddUserModal from "./AddUserModel";
 import Toaster from "../Toaster";
-import { Variable } from "lucide-react";
 
 type User = {
   _id: string;

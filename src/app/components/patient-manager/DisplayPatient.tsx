@@ -442,7 +442,7 @@ function DisplayPatient() {
           Filters & Controls
         </div>
         <div className="flex justify-start items-start gap-4 w-full flex-wrap">
-          <div className="py-3 px-4 flex justify-start items-center w-full max-w-3/4 bg-gray-50 gap-3 rounded-xl border border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+          <div className="py-3 px-4 flex justify-start items-center w-[85%] bg-gray-50 gap-3 rounded-xl border border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
             <Search className="w-5 h-5 text-gray-400" />
             <input
               type="text"
