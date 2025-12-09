@@ -442,7 +442,7 @@ function DisplayPatient() {
           Filters & Controls
         </div>
         <div className="flex justify-start items-start gap-4 w-full flex-wrap">
-          <div className="py-3 px-4 flex justify-start items-center w-[85%] bg-gray-50 gap-3 rounded-xl border border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+          <div className="py-3 px-4 flex justify-start items-center w-[83%] bg-gray-50 gap-3 rounded-xl border border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
             <Search className="w-5 h-5 text-gray-400" />
             <input
               type="text"
@@ -632,7 +632,7 @@ function DisplayPatient() {
                         </span>{" "}
                         of <span className="font-semibold text-gray-900">{filteredPatients.length}</span> patients
                       </div>
-                      <div className="flex justify-center items-center gap-2">
+                      <div className="flex justify-center  flex-wrap items-center gap-2">
                         <button
                           disabled={currentPage === 1}
                           onClick={() => setCurrentPage(currentPage - 1)}

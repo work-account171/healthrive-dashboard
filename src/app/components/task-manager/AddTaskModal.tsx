@@ -11,6 +11,9 @@ const categoriesList = [
   "Follow-up",
   "PA",
   "Message/Document",
+  "Misc Tasks",
+  "Admin Tasks",
+  "Others",
 ];
 
 export interface UploadedFile {
@@ -450,7 +453,9 @@ function AddTaskModal() {
               <option value="" disabled>
                 Select Assignee
               </option>
+              <option value="Doctor">Doctor</option>
               <option value="Virtual Assistant">Virtual Assistant</option>
+              <option value="Medical Assistant">Medical Assistant</option>
             </select>
           </div>
           <div className="flex w-full flex-col justify-start items-start gap-1.5">
