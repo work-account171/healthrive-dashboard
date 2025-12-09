@@ -229,7 +229,7 @@ export default function DisplayTask() {
       <div className="rounded-xl py-6 px-6 flex flex-col gap-5 border my-2 border-gray-200 bg-white shadow-sm">
         <div className="flex justify-start text-xl font-bold items-center gap-3 text-gray-800">
           <SlidersHorizontal className="w-5 h-5 text-primary" />
-          Filters & Controls
+          Filters and Controls
         </div>
         <div className="flex justify-between items-start gap-4 w-full flex-wrap">
           <div className="py-3 px-4 flex justify-start items-center w-[70%] bg-gray-50 gap-3 rounded-xl border border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
