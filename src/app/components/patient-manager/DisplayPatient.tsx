@@ -270,9 +270,9 @@ function DisplayPatient() {
                 {selectedPatient?.name || "Unknown Patient"}
               </h1>
               <div className="flex gap-2 flex-wrap">
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
+                {/* <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
                   Active
-                </span>
+                </span> */}
                 <span
                   className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${
                     selectedPatient?.priority == "emergency"

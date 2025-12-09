@@ -303,10 +303,11 @@ function AddTaskModal() {
 
       handleModal(); // Close modal and reset form
     } else {
-      addNotification({
-        message: "Failed to add task",
-        type: "error",
-      });
+      // addNotification({
+      //   message: "Failed to add task",
+      //   type: "error",
+      // });
+      console.log("failed to add task", data);
     }
   } catch (error: unknown) {
     console.error("Error while adding task:", error);
