@@ -43,7 +43,7 @@ const UserSchema = new Schema<IUser>(
         "super-admin",
         "admin",
         "virtual-assistant",
-        
+        "medical-assistant",
       ],
     },
     permissions: { type: [String], default: [] },

@@ -4,6 +4,7 @@ import { Download, Trash2, Upload, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useRef } from "react";
 import { useAppStore } from '../../stores/useAppStore';
+import Toaster from "../Toaster";
 
 const categoriesList = [
   "Labs",
@@ -56,6 +57,10 @@ function AddTaskModal() {
       }
     >
   >({});
+  const [toast, setToast] = useState<{
+    message: string;
+    variant: "success" | "error" | "warning";
+  } | null>(null);
 
   const { addNotification } = useAppStore();
 
@@ -291,6 +296,10 @@ function AddTaskModal() {
         message: `Task "${title}" successfully added`,
         type: "success",
       });
+      setToast({
+        message: "Task successfully added press refresh button to see the task",
+        variant: "success",
+      });
 
       handleModal(); // Close modal and reset form
     } else {
@@ -313,6 +322,13 @@ function AddTaskModal() {
 
   return (
     <>
+     {toast && (
+        <Toaster
+          message={toast.message}
+          variant={toast.variant}
+          onClose={() => setToast(null)}
+        />
+      )}
       {!modal && (
         <div className="fixed inset-0 bg-white/30 backdrop-blur-sm z-20 flex items-center justify-center">
           <div
