@@ -222,14 +222,21 @@ const Linktool = () => {
       title: "CoverMyMeds",
       subheading: "Prior Authorization Management",
       tags: ["Clinical", "HIPAA", "Critical", "Prior Auth", "Insurance"],
-      link:""
+      link:"https://www.covermymeds.health/"
     },
     {
       icon: icon6,
-      title: "Gmail/Enguard",
+      title: "Gmail",
       subheading: "HIPAA-Compliant Email",
       tags: ["Clinical", "HIPAA", "Critical", "Email"],
       link:"https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox"
+    },
+    {
+      icon: icon6,
+      title: "Enguard",
+      subheading: "HIPAA-Compliant Email",
+      tags: ["Clinical", "HIPAA", "Critical", "Email"],
+      link:"https://mail8.enguard.com/interface/root#/login"
     },
     {
       icon: icon7,
@@ -247,24 +254,24 @@ const Linktool = () => {
     },
     {
       icon: icon9,
-      title: "Free.ai",
+      title: "Freed.ai",
       subheading: "AI Note Transcription",
       tags: ["AI", "HIPAA", "Critical", "Transcription"],
-      link:""
+      link:"https://secure.getfreed.ai/record"
     },
     {
       icon: icon10,
-      title: "Google Forms",
+      title: "Center city Pharmacy",
       subheading: "Patient Surveys & Forms",
       tags: ["Administrative", "Surveys", "Forms"],
-      link:""
+      link:"https://host3d.lifefile.net:40443/application_main_zfw/login/login/vendor_name/centercitypharmacy/access/doctor"
     },
     {
       icon: icon11,
-      title: "Constant Contact",
+      title: "Strive Pharmacy",
       subheading: "Email Marketing Campaigns",
       tags: ["Communication", "Marketing", "Email"],
-      link:""
+      link:"https://www.strivepharmacy.com/"
     },
     {
       icon: icon1,
@@ -272,6 +279,13 @@ const Linktool = () => {
       subheading: "Legacy Task Management",
       tags: ["Legacy", "Tasks"],
       link:"https://trello.com/"
+    },
+    {
+      icon: icon1,
+      title: "BMI calculator",
+      subheading: "Legacy Task Management",
+      tags: ["Legacy", "Tasks"],
+      link:"https://www.calculator.net/bmi-calculator.html?cage=35&csex=f&cheightfeet=5&cheightinch=4&cpound=120&cheightmeter=180&ckg=65&printit=0&ctype=standard&x=Calculate"
     },
   ];
 
